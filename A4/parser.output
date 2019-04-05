@@ -1,0 +1,850 @@
+Grammar
+
+    0 $accept: STATEMENTS $end
+
+    1 STATEMENTS: STATEMENT STATEMENTS
+    2           | STATEMENT
+
+    3 STATEMENT: SELECT LT CONDITIONS GT OB TABLENAME CB SEMI
+    4          | PROJECT LT ATTR_LIST GT OB TABLENAME CB SEMI
+    5          | CARTESIAN_QUERY1 CARTESIAN_QUERY CB SEMI
+    6          | CARTESIAN_QUERY1 EQUI_QUERY CB SEMI
+    7          | error SEMI
+
+    8 CARTESIAN_QUERY1: OB NAME
+
+    9 CARTESIAN_QUERY: CB CARTESIAN OB NAME
+
+   10 EQUI_QUERY: CB EQUI LT EQUI_CONDITION GT OB NAME
+
+   11 TABLENAME: NAME
+
+   12 CONDITIONS: CONDITION AND1 CONDITIONS
+   13           | CONDITION OR1 CONDITIONS
+   14           | CONDITION
+
+   15 AND1: AND
+
+   16 OR1: OR
+
+   17 CONDITION: NAME1 EQ STRING
+   18          | NAME1 NEQ STRING
+   19          | NAME1 EQ NAME
+   20          | NAME1 NEQ NAME
+   21          | NAME1 LT NAME
+   22          | NAME1 GT NAME
+   23          | NAME1 LE NAME
+   24          | NAME1 GE NAME
+   25          | NAME1 LT DIGIT
+   26          | NAME1 GT DIGIT
+   27          | NAME1 LE DIGIT
+   28          | NAME1 GE DIGIT
+   29          | NAME1 EQ DIGIT
+   30          | NAME1 NEQ DIGIT
+
+   31 NAME1: NAME
+
+   32 ATTR_LIST: NAMEZ COMMAZ ATTR_LIST
+   33          | NAMEZ
+
+   34 COMMAZ: COMMA
+
+   35 NAMEZ: NAME
+
+   36 EQUI_CONDITION: EQUI_CONDITION1 EQUI_CONDITION2 EQUI_CONDITION3 EQUI_CONDITION4
+
+   37 EQUI_CONDITION1: NAME
+
+   38 EQUI_CONDITION2: DOT NAME
+
+   39 EQUI_CONDITION3: EQ NAME
+
+   40 EQUI_CONDITION4: DOT NAME
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256) 7
+SELECT (258) 3
+LT (259) 3 4 10 21 25
+GT (260) 3 4 10 22 26
+LE (261) 23 27
+GE (262) 24 28
+EQ (263) 17 19 29 39
+OB (264) 3 4 8 9 10
+CB (265) 3 4 5 6 9 10
+PROJECT (266) 4
+CARTESIAN (267) 9
+NAME (268) 8 9 10 11 19 20 21 22 23 24 31 35 37 38 39 40
+EQUI (269) 10
+AND (270) 15
+OR (271) 16
+COMMA (272) 34
+DOT (273) 38 40
+SEMI (274) 3 4 5 6 7
+NEQ (275) 18 20 30
+STRING (276) 17 18
+DIGIT (277) 25 26 27 28 29 30
+
+
+Nonterminals, with rules where they appear
+
+$accept (23)
+    on left: 0
+STATEMENTS (24)
+    on left: 1 2, on right: 0 1
+STATEMENT (25)
+    on left: 3 4 5 6 7, on right: 1 2
+CARTESIAN_QUERY1 (26)
+    on left: 8, on right: 5 6
+CARTESIAN_QUERY (27)
+    on left: 9, on right: 5
+EQUI_QUERY (28)
+    on left: 10, on right: 6
+TABLENAME (29)
+    on left: 11, on right: 3 4
+CONDITIONS (30)
+    on left: 12 13 14, on right: 3 12 13
+AND1 (31)
+    on left: 15, on right: 12
+OR1 (32)
+    on left: 16, on right: 13
+CONDITION (33)
+    on left: 17 18 19 20 21 22 23 24 25 26 27 28 29 30, on right: 12
+    13 14
+NAME1 (34)
+    on left: 31, on right: 17 18 19 20 21 22 23 24 25 26 27 28 29 30
+ATTR_LIST (35)
+    on left: 32 33, on right: 4 32
+COMMAZ (36)
+    on left: 34, on right: 32
+NAMEZ (37)
+    on left: 35, on right: 32 33
+EQUI_CONDITION (38)
+    on left: 36, on right: 10
+EQUI_CONDITION1 (39)
+    on left: 37, on right: 36
+EQUI_CONDITION2 (40)
+    on left: 38, on right: 36
+EQUI_CONDITION3 (41)
+    on left: 39, on right: 36
+EQUI_CONDITION4 (42)
+    on left: 40, on right: 36
+
+
+State 0
+
+    0 $accept: . STATEMENTS $end
+
+    error    shift, and go to state 1
+    SELECT   shift, and go to state 2
+    OB       shift, and go to state 3
+    PROJECT  shift, and go to state 4
+
+    STATEMENTS        go to state 5
+    STATEMENT         go to state 6
+    CARTESIAN_QUERY1  go to state 7
+
+
+State 1
+
+    7 STATEMENT: error . SEMI
+
+    SEMI  shift, and go to state 8
+
+
+State 2
+
+    3 STATEMENT: SELECT . LT CONDITIONS GT OB TABLENAME CB SEMI
+
+    LT  shift, and go to state 9
+
+
+State 3
+
+    8 CARTESIAN_QUERY1: OB . NAME
+
+    NAME  shift, and go to state 10
+
+
+State 4
+
+    4 STATEMENT: PROJECT . LT ATTR_LIST GT OB TABLENAME CB SEMI
+
+    LT  shift, and go to state 11
+
+
+State 5
+
+    0 $accept: STATEMENTS . $end
+
+    $end  shift, and go to state 12
+
+
+State 6
+
+    1 STATEMENTS: STATEMENT . STATEMENTS
+    2           | STATEMENT .
+
+    error    shift, and go to state 1
+    SELECT   shift, and go to state 2
+    OB       shift, and go to state 3
+    PROJECT  shift, and go to state 4
+
+    $end  reduce using rule 2 (STATEMENTS)
+
+    STATEMENTS        go to state 13
+    STATEMENT         go to state 6
+    CARTESIAN_QUERY1  go to state 7
+
+
+State 7
+
+    5 STATEMENT: CARTESIAN_QUERY1 . CARTESIAN_QUERY CB SEMI
+    6          | CARTESIAN_QUERY1 . EQUI_QUERY CB SEMI
+
+    CB  shift, and go to state 14
+
+    CARTESIAN_QUERY  go to state 15
+    EQUI_QUERY       go to state 16
+
+
+State 8
+
+    7 STATEMENT: error SEMI .
+
+    $default  reduce using rule 7 (STATEMENT)
+
+
+State 9
+
+    3 STATEMENT: SELECT LT . CONDITIONS GT OB TABLENAME CB SEMI
+
+    NAME  shift, and go to state 17
+
+    CONDITIONS  go to state 18
+    CONDITION   go to state 19
+    NAME1       go to state 20
+
+
+State 10
+
+    8 CARTESIAN_QUERY1: OB NAME .
+
+    $default  reduce using rule 8 (CARTESIAN_QUERY1)
+
+
+State 11
+
+    4 STATEMENT: PROJECT LT . ATTR_LIST GT OB TABLENAME CB SEMI
+
+    NAME  shift, and go to state 21
+
+    ATTR_LIST  go to state 22
+    NAMEZ      go to state 23
+
+
+State 12
+
+    0 $accept: STATEMENTS $end .
+
+    $default  accept
+
+
+State 13
+
+    1 STATEMENTS: STATEMENT STATEMENTS .
+
+    $default  reduce using rule 1 (STATEMENTS)
+
+
+State 14
+
+    9 CARTESIAN_QUERY: CB . CARTESIAN OB NAME
+   10 EQUI_QUERY: CB . EQUI LT EQUI_CONDITION GT OB NAME
+
+    CARTESIAN  shift, and go to state 24
+    EQUI       shift, and go to state 25
+
+
+State 15
+
+    5 STATEMENT: CARTESIAN_QUERY1 CARTESIAN_QUERY . CB SEMI
+
+    CB  shift, and go to state 26
+
+
+State 16
+
+    6 STATEMENT: CARTESIAN_QUERY1 EQUI_QUERY . CB SEMI
+
+    CB  shift, and go to state 27
+
+
+State 17
+
+   31 NAME1: NAME .
+
+    $default  reduce using rule 31 (NAME1)
+
+
+State 18
+
+    3 STATEMENT: SELECT LT CONDITIONS . GT OB TABLENAME CB SEMI
+
+    GT  shift, and go to state 28
+
+
+State 19
+
+   12 CONDITIONS: CONDITION . AND1 CONDITIONS
+   13           | CONDITION . OR1 CONDITIONS
+   14           | CONDITION .
+
+    AND  shift, and go to state 29
+    OR   shift, and go to state 30
+
+    $default  reduce using rule 14 (CONDITIONS)
+
+    AND1  go to state 31
+    OR1   go to state 32
+
+
+State 20
+
+   17 CONDITION: NAME1 . EQ STRING
+   18          | NAME1 . NEQ STRING
+   19          | NAME1 . EQ NAME
+   20          | NAME1 . NEQ NAME
+   21          | NAME1 . LT NAME
+   22          | NAME1 . GT NAME
+   23          | NAME1 . LE NAME
+   24          | NAME1 . GE NAME
+   25          | NAME1 . LT DIGIT
+   26          | NAME1 . GT DIGIT
+   27          | NAME1 . LE DIGIT
+   28          | NAME1 . GE DIGIT
+   29          | NAME1 . EQ DIGIT
+   30          | NAME1 . NEQ DIGIT
+
+    LT   shift, and go to state 33
+    GT   shift, and go to state 34
+    LE   shift, and go to state 35
+    GE   shift, and go to state 36
+    EQ   shift, and go to state 37
+    NEQ  shift, and go to state 38
+
+
+State 21
+
+   35 NAMEZ: NAME .
+
+    $default  reduce using rule 35 (NAMEZ)
+
+
+State 22
+
+    4 STATEMENT: PROJECT LT ATTR_LIST . GT OB TABLENAME CB SEMI
+
+    GT  shift, and go to state 39
+
+
+State 23
+
+   32 ATTR_LIST: NAMEZ . COMMAZ ATTR_LIST
+   33          | NAMEZ .
+
+    COMMA  shift, and go to state 40
+
+    $default  reduce using rule 33 (ATTR_LIST)
+
+    COMMAZ  go to state 41
+
+
+State 24
+
+    9 CARTESIAN_QUERY: CB CARTESIAN . OB NAME
+
+    OB  shift, and go to state 42
+
+
+State 25
+
+   10 EQUI_QUERY: CB EQUI . LT EQUI_CONDITION GT OB NAME
+
+    LT  shift, and go to state 43
+
+
+State 26
+
+    5 STATEMENT: CARTESIAN_QUERY1 CARTESIAN_QUERY CB . SEMI
+
+    SEMI  shift, and go to state 44
+
+
+State 27
+
+    6 STATEMENT: CARTESIAN_QUERY1 EQUI_QUERY CB . SEMI
+
+    SEMI  shift, and go to state 45
+
+
+State 28
+
+    3 STATEMENT: SELECT LT CONDITIONS GT . OB TABLENAME CB SEMI
+
+    OB  shift, and go to state 46
+
+
+State 29
+
+   15 AND1: AND .
+
+    $default  reduce using rule 15 (AND1)
+
+
+State 30
+
+   16 OR1: OR .
+
+    $default  reduce using rule 16 (OR1)
+
+
+State 31
+
+   12 CONDITIONS: CONDITION AND1 . CONDITIONS
+
+    NAME  shift, and go to state 17
+
+    CONDITIONS  go to state 47
+    CONDITION   go to state 19
+    NAME1       go to state 20
+
+
+State 32
+
+   13 CONDITIONS: CONDITION OR1 . CONDITIONS
+
+    NAME  shift, and go to state 17
+
+    CONDITIONS  go to state 48
+    CONDITION   go to state 19
+    NAME1       go to state 20
+
+
+State 33
+
+   21 CONDITION: NAME1 LT . NAME
+   25          | NAME1 LT . DIGIT
+
+    NAME   shift, and go to state 49
+    DIGIT  shift, and go to state 50
+
+
+State 34
+
+   22 CONDITION: NAME1 GT . NAME
+   26          | NAME1 GT . DIGIT
+
+    NAME   shift, and go to state 51
+    DIGIT  shift, and go to state 52
+
+
+State 35
+
+   23 CONDITION: NAME1 LE . NAME
+   27          | NAME1 LE . DIGIT
+
+    NAME   shift, and go to state 53
+    DIGIT  shift, and go to state 54
+
+
+State 36
+
+   24 CONDITION: NAME1 GE . NAME
+   28          | NAME1 GE . DIGIT
+
+    NAME   shift, and go to state 55
+    DIGIT  shift, and go to state 56
+
+
+State 37
+
+   17 CONDITION: NAME1 EQ . STRING
+   19          | NAME1 EQ . NAME
+   29          | NAME1 EQ . DIGIT
+
+    NAME    shift, and go to state 57
+    STRING  shift, and go to state 58
+    DIGIT   shift, and go to state 59
+
+
+State 38
+
+   18 CONDITION: NAME1 NEQ . STRING
+   20          | NAME1 NEQ . NAME
+   30          | NAME1 NEQ . DIGIT
+
+    NAME    shift, and go to state 60
+    STRING  shift, and go to state 61
+    DIGIT   shift, and go to state 62
+
+
+State 39
+
+    4 STATEMENT: PROJECT LT ATTR_LIST GT . OB TABLENAME CB SEMI
+
+    OB  shift, and go to state 63
+
+
+State 40
+
+   34 COMMAZ: COMMA .
+
+    $default  reduce using rule 34 (COMMAZ)
+
+
+State 41
+
+   32 ATTR_LIST: NAMEZ COMMAZ . ATTR_LIST
+
+    NAME  shift, and go to state 21
+
+    ATTR_LIST  go to state 64
+    NAMEZ      go to state 23
+
+
+State 42
+
+    9 CARTESIAN_QUERY: CB CARTESIAN OB . NAME
+
+    NAME  shift, and go to state 65
+
+
+State 43
+
+   10 EQUI_QUERY: CB EQUI LT . EQUI_CONDITION GT OB NAME
+
+    NAME  shift, and go to state 66
+
+    EQUI_CONDITION   go to state 67
+    EQUI_CONDITION1  go to state 68
+
+
+State 44
+
+    5 STATEMENT: CARTESIAN_QUERY1 CARTESIAN_QUERY CB SEMI .
+
+    $default  reduce using rule 5 (STATEMENT)
+
+
+State 45
+
+    6 STATEMENT: CARTESIAN_QUERY1 EQUI_QUERY CB SEMI .
+
+    $default  reduce using rule 6 (STATEMENT)
+
+
+State 46
+
+    3 STATEMENT: SELECT LT CONDITIONS GT OB . TABLENAME CB SEMI
+
+    NAME  shift, and go to state 69
+
+    TABLENAME  go to state 70
+
+
+State 47
+
+   12 CONDITIONS: CONDITION AND1 CONDITIONS .
+
+    $default  reduce using rule 12 (CONDITIONS)
+
+
+State 48
+
+   13 CONDITIONS: CONDITION OR1 CONDITIONS .
+
+    $default  reduce using rule 13 (CONDITIONS)
+
+
+State 49
+
+   21 CONDITION: NAME1 LT NAME .
+
+    $default  reduce using rule 21 (CONDITION)
+
+
+State 50
+
+   25 CONDITION: NAME1 LT DIGIT .
+
+    $default  reduce using rule 25 (CONDITION)
+
+
+State 51
+
+   22 CONDITION: NAME1 GT NAME .
+
+    $default  reduce using rule 22 (CONDITION)
+
+
+State 52
+
+   26 CONDITION: NAME1 GT DIGIT .
+
+    $default  reduce using rule 26 (CONDITION)
+
+
+State 53
+
+   23 CONDITION: NAME1 LE NAME .
+
+    $default  reduce using rule 23 (CONDITION)
+
+
+State 54
+
+   27 CONDITION: NAME1 LE DIGIT .
+
+    $default  reduce using rule 27 (CONDITION)
+
+
+State 55
+
+   24 CONDITION: NAME1 GE NAME .
+
+    $default  reduce using rule 24 (CONDITION)
+
+
+State 56
+
+   28 CONDITION: NAME1 GE DIGIT .
+
+    $default  reduce using rule 28 (CONDITION)
+
+
+State 57
+
+   19 CONDITION: NAME1 EQ NAME .
+
+    $default  reduce using rule 19 (CONDITION)
+
+
+State 58
+
+   17 CONDITION: NAME1 EQ STRING .
+
+    $default  reduce using rule 17 (CONDITION)
+
+
+State 59
+
+   29 CONDITION: NAME1 EQ DIGIT .
+
+    $default  reduce using rule 29 (CONDITION)
+
+
+State 60
+
+   20 CONDITION: NAME1 NEQ NAME .
+
+    $default  reduce using rule 20 (CONDITION)
+
+
+State 61
+
+   18 CONDITION: NAME1 NEQ STRING .
+
+    $default  reduce using rule 18 (CONDITION)
+
+
+State 62
+
+   30 CONDITION: NAME1 NEQ DIGIT .
+
+    $default  reduce using rule 30 (CONDITION)
+
+
+State 63
+
+    4 STATEMENT: PROJECT LT ATTR_LIST GT OB . TABLENAME CB SEMI
+
+    NAME  shift, and go to state 69
+
+    TABLENAME  go to state 71
+
+
+State 64
+
+   32 ATTR_LIST: NAMEZ COMMAZ ATTR_LIST .
+
+    $default  reduce using rule 32 (ATTR_LIST)
+
+
+State 65
+
+    9 CARTESIAN_QUERY: CB CARTESIAN OB NAME .
+
+    $default  reduce using rule 9 (CARTESIAN_QUERY)
+
+
+State 66
+
+   37 EQUI_CONDITION1: NAME .
+
+    $default  reduce using rule 37 (EQUI_CONDITION1)
+
+
+State 67
+
+   10 EQUI_QUERY: CB EQUI LT EQUI_CONDITION . GT OB NAME
+
+    GT  shift, and go to state 72
+
+
+State 68
+
+   36 EQUI_CONDITION: EQUI_CONDITION1 . EQUI_CONDITION2 EQUI_CONDITION3 EQUI_CONDITION4
+
+    DOT  shift, and go to state 73
+
+    EQUI_CONDITION2  go to state 74
+
+
+State 69
+
+   11 TABLENAME: NAME .
+
+    $default  reduce using rule 11 (TABLENAME)
+
+
+State 70
+
+    3 STATEMENT: SELECT LT CONDITIONS GT OB TABLENAME . CB SEMI
+
+    CB  shift, and go to state 75
+
+
+State 71
+
+    4 STATEMENT: PROJECT LT ATTR_LIST GT OB TABLENAME . CB SEMI
+
+    CB  shift, and go to state 76
+
+
+State 72
+
+   10 EQUI_QUERY: CB EQUI LT EQUI_CONDITION GT . OB NAME
+
+    OB  shift, and go to state 77
+
+
+State 73
+
+   38 EQUI_CONDITION2: DOT . NAME
+
+    NAME  shift, and go to state 78
+
+
+State 74
+
+   36 EQUI_CONDITION: EQUI_CONDITION1 EQUI_CONDITION2 . EQUI_CONDITION3 EQUI_CONDITION4
+
+    EQ  shift, and go to state 79
+
+    EQUI_CONDITION3  go to state 80
+
+
+State 75
+
+    3 STATEMENT: SELECT LT CONDITIONS GT OB TABLENAME CB . SEMI
+
+    SEMI  shift, and go to state 81
+
+
+State 76
+
+    4 STATEMENT: PROJECT LT ATTR_LIST GT OB TABLENAME CB . SEMI
+
+    SEMI  shift, and go to state 82
+
+
+State 77
+
+   10 EQUI_QUERY: CB EQUI LT EQUI_CONDITION GT OB . NAME
+
+    NAME  shift, and go to state 83
+
+
+State 78
+
+   38 EQUI_CONDITION2: DOT NAME .
+
+    $default  reduce using rule 38 (EQUI_CONDITION2)
+
+
+State 79
+
+   39 EQUI_CONDITION3: EQ . NAME
+
+    NAME  shift, and go to state 84
+
+
+State 80
+
+   36 EQUI_CONDITION: EQUI_CONDITION1 EQUI_CONDITION2 EQUI_CONDITION3 . EQUI_CONDITION4
+
+    DOT  shift, and go to state 85
+
+    EQUI_CONDITION4  go to state 86
+
+
+State 81
+
+    3 STATEMENT: SELECT LT CONDITIONS GT OB TABLENAME CB SEMI .
+
+    $default  reduce using rule 3 (STATEMENT)
+
+
+State 82
+
+    4 STATEMENT: PROJECT LT ATTR_LIST GT OB TABLENAME CB SEMI .
+
+    $default  reduce using rule 4 (STATEMENT)
+
+
+State 83
+
+   10 EQUI_QUERY: CB EQUI LT EQUI_CONDITION GT OB NAME .
+
+    $default  reduce using rule 10 (EQUI_QUERY)
+
+
+State 84
+
+   39 EQUI_CONDITION3: EQ NAME .
+
+    $default  reduce using rule 39 (EQUI_CONDITION3)
+
+
+State 85
+
+   40 EQUI_CONDITION4: DOT . NAME
+
+    NAME  shift, and go to state 87
+
+
+State 86
+
+   36 EQUI_CONDITION: EQUI_CONDITION1 EQUI_CONDITION2 EQUI_CONDITION3 EQUI_CONDITION4 .
+
+    $default  reduce using rule 36 (EQUI_CONDITION)
+
+
+State 87
+
+   40 EQUI_CONDITION4: DOT NAME .
+
+    $default  reduce using rule 40 (EQUI_CONDITION4)
