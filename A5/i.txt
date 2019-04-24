@@ -1,0 +1,66 @@
+#include<stdio.h>
+int k = 25;
+int l = 10;
+int sahib(){
+	int arr[3][3][2];
+	int b[3][3][3];
+	b[1][1][1] = 2;
+	arr[1][1][1] =3;
+	arr[0][0][0] = b[1][1][1];
+
+	return arr[0][0][0];
+
+
+} 
+void void_func(){
+	while(1){
+		k--;
+		if(k==10){
+			break;
+		}
+	}
+}
+int func1(int a,int b){
+	int i=0;
+	for(i =0 ;i<a;i++){
+		if(a==b){
+			continue;
+		}
+		else{
+			if(a<b){
+				b--;
+			}
+			else{
+				b++;
+			}
+		}
+	}
+	return a-b;
+}
+int func2(int c){
+	int s;
+	s=c;
+	switch (c)
+	{
+		case (0):
+			{
+				void_func();
+				return c;
+				break;
+				
+			}
+		case (1):{
+			return c+1;
+			break;
+		}
+		default:{
+			break;
+			}
+	}
+}
+
+
+main()
+{
+	return 0;
+}

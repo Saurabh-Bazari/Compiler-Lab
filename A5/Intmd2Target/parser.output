@@ -1,0 +1,656 @@
+Grammar
+
+    0 $accept: funcs $end
+
+    1 funcs: func funcs
+    2      | func
+
+    3 func: FUNC BEGINN funcname intm_code FUNC END
+
+    4 funcname: var_ID
+
+    5 intm_code: %empty
+    6          | intm_code intm_line
+
+    7 intm_line: binary_operation
+    8          | assignment
+    9          | jump_Cond
+   10          | jump_unCond
+   11          | label
+   12          | arr_decl_stmt
+   13          | args_stmt
+   14          | param_stmt
+   15          | refparam_stmt
+   16          | call_stmt
+   17          | return_stmt
+
+   18 binary_operation: var_ID EQ id_or_num arith_rel_ops id_or_num
+
+   19 id_or_num: var_ID
+   20          | num
+
+   21 arith_rel_ops: ARITH_REL_OPS
+
+   22 var_ID: ID
+
+   23 num: INT
+   24    | FLOAT
+
+   25 assignment: var_ID EQ var_ID
+   26           | var_ID EQ num
+
+   27 label: LABEL
+
+   28 jump_Cond: IF var_ID GOTO var_ID
+   29          | IF num GOTO var_ID
+
+   30 jump_unCond: GOTO var_ID
+
+   31 args_stmt: ARGS var_ID
+
+   32 arr_decl_stmt: DECL var_ID
+
+   33 param_stmt: PARAM id_or_num
+
+   34 return_stmt: RETURN ret_val
+
+   35 ret_val: NULLL
+   36        | id_or_num
+
+   37 refparam_stmt: REFPARAM var_ID
+
+   38 call_stmt: CALL var_ID
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+INT (258) 23
+FLOAT (259) 24
+ID (260) 22
+EQ (261) 18 25 26
+DECL (262) 32
+ARITH_REL_OPS (263) 21
+IF (264) 28 29
+GOTO (265) 28 29 30
+LABEL (266) 27
+FUNC (267) 3
+BEGINN (268) 3
+RETURN (269) 34
+END (270) 3
+PARAM (271) 33
+REFPARAM (272) 37
+CALL (273) 38
+ARGS (274) 31
+NULLL (275) 35
+
+
+Nonterminals, with rules where they appear
+
+$accept (21)
+    on left: 0
+funcs (22)
+    on left: 1 2, on right: 0 1
+func (23)
+    on left: 3, on right: 1 2
+funcname (24)
+    on left: 4, on right: 3
+intm_code (25)
+    on left: 5 6, on right: 3 6
+intm_line (26)
+    on left: 7 8 9 10 11 12 13 14 15 16 17, on right: 6
+binary_operation (27)
+    on left: 18, on right: 7
+id_or_num (28)
+    on left: 19 20, on right: 18 33 36
+arith_rel_ops (29)
+    on left: 21, on right: 18
+var_ID (30)
+    on left: 22, on right: 4 18 19 25 26 28 29 30 31 32 37 38
+num (31)
+    on left: 23 24, on right: 20 26 29
+assignment (32)
+    on left: 25 26, on right: 8
+label (33)
+    on left: 27, on right: 11
+jump_Cond (34)
+    on left: 28 29, on right: 9
+jump_unCond (35)
+    on left: 30, on right: 10
+args_stmt (36)
+    on left: 31, on right: 13
+arr_decl_stmt (37)
+    on left: 32, on right: 12
+param_stmt (38)
+    on left: 33, on right: 14
+return_stmt (39)
+    on left: 34, on right: 17
+ret_val (40)
+    on left: 35 36, on right: 34
+refparam_stmt (41)
+    on left: 37, on right: 15
+call_stmt (42)
+    on left: 38, on right: 16
+
+
+State 0
+
+    0 $accept: . funcs $end
+
+    FUNC  shift, and go to state 1
+
+    funcs  go to state 2
+    func   go to state 3
+
+
+State 1
+
+    3 func: FUNC . BEGINN funcname intm_code FUNC END
+
+    BEGINN  shift, and go to state 4
+
+
+State 2
+
+    0 $accept: funcs . $end
+
+    $end  shift, and go to state 5
+
+
+State 3
+
+    1 funcs: func . funcs
+    2      | func .
+
+    FUNC  shift, and go to state 1
+
+    $default  reduce using rule 2 (funcs)
+
+    funcs  go to state 6
+    func   go to state 3
+
+
+State 4
+
+    3 func: FUNC BEGINN . funcname intm_code FUNC END
+
+    ID  shift, and go to state 7
+
+    funcname  go to state 8
+    var_ID    go to state 9
+
+
+State 5
+
+    0 $accept: funcs $end .
+
+    $default  accept
+
+
+State 6
+
+    1 funcs: func funcs .
+
+    $default  reduce using rule 1 (funcs)
+
+
+State 7
+
+   22 var_ID: ID .
+
+    $default  reduce using rule 22 (var_ID)
+
+
+State 8
+
+    3 func: FUNC BEGINN funcname . intm_code FUNC END
+
+    $default  reduce using rule 5 (intm_code)
+
+    intm_code  go to state 10
+
+
+State 9
+
+    4 funcname: var_ID .
+
+    $default  reduce using rule 4 (funcname)
+
+
+State 10
+
+    3 func: FUNC BEGINN funcname intm_code . FUNC END
+    6 intm_code: intm_code . intm_line
+
+    ID        shift, and go to state 7
+    DECL      shift, and go to state 11
+    IF        shift, and go to state 12
+    GOTO      shift, and go to state 13
+    LABEL     shift, and go to state 14
+    FUNC      shift, and go to state 15
+    RETURN    shift, and go to state 16
+    PARAM     shift, and go to state 17
+    REFPARAM  shift, and go to state 18
+    CALL      shift, and go to state 19
+    ARGS      shift, and go to state 20
+
+    intm_line         go to state 21
+    binary_operation  go to state 22
+    var_ID            go to state 23
+    assignment        go to state 24
+    label             go to state 25
+    jump_Cond         go to state 26
+    jump_unCond       go to state 27
+    args_stmt         go to state 28
+    arr_decl_stmt     go to state 29
+    param_stmt        go to state 30
+    return_stmt       go to state 31
+    refparam_stmt     go to state 32
+    call_stmt         go to state 33
+
+
+State 11
+
+   32 arr_decl_stmt: DECL . var_ID
+
+    ID  shift, and go to state 7
+
+    var_ID  go to state 34
+
+
+State 12
+
+   28 jump_Cond: IF . var_ID GOTO var_ID
+   29          | IF . num GOTO var_ID
+
+    INT    shift, and go to state 35
+    FLOAT  shift, and go to state 36
+    ID     shift, and go to state 7
+
+    var_ID  go to state 37
+    num     go to state 38
+
+
+State 13
+
+   30 jump_unCond: GOTO . var_ID
+
+    ID  shift, and go to state 7
+
+    var_ID  go to state 39
+
+
+State 14
+
+   27 label: LABEL .
+
+    $default  reduce using rule 27 (label)
+
+
+State 15
+
+    3 func: FUNC BEGINN funcname intm_code FUNC . END
+
+    END  shift, and go to state 40
+
+
+State 16
+
+   34 return_stmt: RETURN . ret_val
+
+    INT    shift, and go to state 35
+    FLOAT  shift, and go to state 36
+    ID     shift, and go to state 7
+    NULLL  shift, and go to state 41
+
+    id_or_num  go to state 42
+    var_ID     go to state 43
+    num        go to state 44
+    ret_val    go to state 45
+
+
+State 17
+
+   33 param_stmt: PARAM . id_or_num
+
+    INT    shift, and go to state 35
+    FLOAT  shift, and go to state 36
+    ID     shift, and go to state 7
+
+    id_or_num  go to state 46
+    var_ID     go to state 43
+    num        go to state 44
+
+
+State 18
+
+   37 refparam_stmt: REFPARAM . var_ID
+
+    ID  shift, and go to state 7
+
+    var_ID  go to state 47
+
+
+State 19
+
+   38 call_stmt: CALL . var_ID
+
+    ID  shift, and go to state 7
+
+    var_ID  go to state 48
+
+
+State 20
+
+   31 args_stmt: ARGS . var_ID
+
+    ID  shift, and go to state 7
+
+    var_ID  go to state 49
+
+
+State 21
+
+    6 intm_code: intm_code intm_line .
+
+    $default  reduce using rule 6 (intm_code)
+
+
+State 22
+
+    7 intm_line: binary_operation .
+
+    $default  reduce using rule 7 (intm_line)
+
+
+State 23
+
+   18 binary_operation: var_ID . EQ id_or_num arith_rel_ops id_or_num
+   25 assignment: var_ID . EQ var_ID
+   26           | var_ID . EQ num
+
+    EQ  shift, and go to state 50
+
+
+State 24
+
+    8 intm_line: assignment .
+
+    $default  reduce using rule 8 (intm_line)
+
+
+State 25
+
+   11 intm_line: label .
+
+    $default  reduce using rule 11 (intm_line)
+
+
+State 26
+
+    9 intm_line: jump_Cond .
+
+    $default  reduce using rule 9 (intm_line)
+
+
+State 27
+
+   10 intm_line: jump_unCond .
+
+    $default  reduce using rule 10 (intm_line)
+
+
+State 28
+
+   13 intm_line: args_stmt .
+
+    $default  reduce using rule 13 (intm_line)
+
+
+State 29
+
+   12 intm_line: arr_decl_stmt .
+
+    $default  reduce using rule 12 (intm_line)
+
+
+State 30
+
+   14 intm_line: param_stmt .
+
+    $default  reduce using rule 14 (intm_line)
+
+
+State 31
+
+   17 intm_line: return_stmt .
+
+    $default  reduce using rule 17 (intm_line)
+
+
+State 32
+
+   15 intm_line: refparam_stmt .
+
+    $default  reduce using rule 15 (intm_line)
+
+
+State 33
+
+   16 intm_line: call_stmt .
+
+    $default  reduce using rule 16 (intm_line)
+
+
+State 34
+
+   32 arr_decl_stmt: DECL var_ID .
+
+    $default  reduce using rule 32 (arr_decl_stmt)
+
+
+State 35
+
+   23 num: INT .
+
+    $default  reduce using rule 23 (num)
+
+
+State 36
+
+   24 num: FLOAT .
+
+    $default  reduce using rule 24 (num)
+
+
+State 37
+
+   28 jump_Cond: IF var_ID . GOTO var_ID
+
+    GOTO  shift, and go to state 51
+
+
+State 38
+
+   29 jump_Cond: IF num . GOTO var_ID
+
+    GOTO  shift, and go to state 52
+
+
+State 39
+
+   30 jump_unCond: GOTO var_ID .
+
+    $default  reduce using rule 30 (jump_unCond)
+
+
+State 40
+
+    3 func: FUNC BEGINN funcname intm_code FUNC END .
+
+    $default  reduce using rule 3 (func)
+
+
+State 41
+
+   35 ret_val: NULLL .
+
+    $default  reduce using rule 35 (ret_val)
+
+
+State 42
+
+   36 ret_val: id_or_num .
+
+    $default  reduce using rule 36 (ret_val)
+
+
+State 43
+
+   19 id_or_num: var_ID .
+
+    $default  reduce using rule 19 (id_or_num)
+
+
+State 44
+
+   20 id_or_num: num .
+
+    $default  reduce using rule 20 (id_or_num)
+
+
+State 45
+
+   34 return_stmt: RETURN ret_val .
+
+    $default  reduce using rule 34 (return_stmt)
+
+
+State 46
+
+   33 param_stmt: PARAM id_or_num .
+
+    $default  reduce using rule 33 (param_stmt)
+
+
+State 47
+
+   37 refparam_stmt: REFPARAM var_ID .
+
+    $default  reduce using rule 37 (refparam_stmt)
+
+
+State 48
+
+   38 call_stmt: CALL var_ID .
+
+    $default  reduce using rule 38 (call_stmt)
+
+
+State 49
+
+   31 args_stmt: ARGS var_ID .
+
+    $default  reduce using rule 31 (args_stmt)
+
+
+State 50
+
+   18 binary_operation: var_ID EQ . id_or_num arith_rel_ops id_or_num
+   25 assignment: var_ID EQ . var_ID
+   26           | var_ID EQ . num
+
+    INT    shift, and go to state 35
+    FLOAT  shift, and go to state 36
+    ID     shift, and go to state 7
+
+    id_or_num  go to state 53
+    var_ID     go to state 54
+    num        go to state 55
+
+
+State 51
+
+   28 jump_Cond: IF var_ID GOTO . var_ID
+
+    ID  shift, and go to state 7
+
+    var_ID  go to state 56
+
+
+State 52
+
+   29 jump_Cond: IF num GOTO . var_ID
+
+    ID  shift, and go to state 7
+
+    var_ID  go to state 57
+
+
+State 53
+
+   18 binary_operation: var_ID EQ id_or_num . arith_rel_ops id_or_num
+
+    ARITH_REL_OPS  shift, and go to state 58
+
+    arith_rel_ops  go to state 59
+
+
+State 54
+
+   19 id_or_num: var_ID .
+   25 assignment: var_ID EQ var_ID .
+
+    ARITH_REL_OPS  reduce using rule 19 (id_or_num)
+    $default       reduce using rule 25 (assignment)
+
+
+State 55
+
+   20 id_or_num: num .
+   26 assignment: var_ID EQ num .
+
+    ARITH_REL_OPS  reduce using rule 20 (id_or_num)
+    $default       reduce using rule 26 (assignment)
+
+
+State 56
+
+   28 jump_Cond: IF var_ID GOTO var_ID .
+
+    $default  reduce using rule 28 (jump_Cond)
+
+
+State 57
+
+   29 jump_Cond: IF num GOTO var_ID .
+
+    $default  reduce using rule 29 (jump_Cond)
+
+
+State 58
+
+   21 arith_rel_ops: ARITH_REL_OPS .
+
+    $default  reduce using rule 21 (arith_rel_ops)
+
+
+State 59
+
+   18 binary_operation: var_ID EQ id_or_num arith_rel_ops . id_or_num
+
+    INT    shift, and go to state 35
+    FLOAT  shift, and go to state 36
+    ID     shift, and go to state 7
+
+    id_or_num  go to state 60
+    var_ID     go to state 43
+    num        go to state 44
+
+
+State 60
+
+   18 binary_operation: var_ID EQ id_or_num arith_rel_ops id_or_num .
+
+    $default  reduce using rule 18 (binary_operation)
