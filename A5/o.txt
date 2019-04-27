@@ -1,257 +1,81 @@
-func begin sahib
-decl int.arr.2.sahib(8)
-decl int.b.2.sahib(9)
-int.temp_0 = 2
-int.temp_1 = 1
-int.temp_2 = 1
-int.temp_3 = int.temp_1
-int.temp_3 = int.temp_3 * 3
-int.temp_3 = int.temp_3 + int.temp_2
-int.b.2.sahib(int.temp_3) = int.temp_0
-int.temp_4 = 3
-int.temp_5 = 1
-int.temp_6 = 1
-int.temp_7 = 1
-int.temp_8 = int.temp_5
-int.temp_8 = int.temp_8 * 2
-int.temp_8 = int.temp_8 + int.temp_6
-int.temp_8 = int.temp_8 * 2
-int.temp_8 = int.temp_8 + int.temp_7
-int.arr.2.sahib(int.temp_8) = int.temp_4
-int.temp_9 = 1
-int.temp_10 = 1
-int.temp_11 = int.temp_9
-int.temp_11 = int.temp_11 * 3
-int.temp_11 = int.temp_11 + int.temp_10
-int.temp_12 = int.b.2.sahib(int.temp_11)
-int.temp_13 = 0
-int.temp_14 = 0
-int.temp_15 = 0
-int.temp_16 = int.temp_13
-int.temp_16 = int.temp_16 * 2
-int.temp_16 = int.temp_16 + int.temp_14
-int.temp_16 = int.temp_16 * 2
-int.temp_16 = int.temp_16 + int.temp_15
-int.arr.2.sahib(int.temp_16) = int.temp_12
-int.temp_17 = 0
-int.temp_18 = 0
-int.temp_19 = 0
-int.temp_20 = int.temp_17
-int.temp_20 = int.temp_20 * 2
-int.temp_20 = int.temp_20 + int.temp_18
-int.temp_20 = int.temp_20 * 2
-int.temp_20 = int.temp_20 + int.temp_19
-int.temp_21 = int.arr.2.sahib(int.temp_20)
-return int.temp_21
-func end
-func begin void_func
+func begin main
+decl int.arr.1(10)
+print "Enter : "
+print "\n" 
+int.temp_0 = 0
+int.i.1 = int.temp_0
 label_0:
-int.temp_22 = 1
-if int.temp_22 goto label_1
+int.temp_2 = 10
+int.temp_1 = int.i.1 < int.temp_2
+if int.temp_1 goto label_1
 goto label_2
 label_1:
-int.k.0 = int.k.0 - 1
-int.temp_24 = 10
-int.temp_23 = int.k.0 == int.temp_24
-if int.temp_23 goto label_3
-goto label_4
+int.temp_3 = int.i.1
+read int.arr.1(int.temp_3)
 label_3:
-goto label_2
-label_4:
+int.i.1 = int.i.1 + 1
 goto label_0
 label_2:
-func end
-func begin func1
-args int.a.1.func1
-args int.b.1.func1
-int.b.1.func1 = int.b.1.func1 + 1
-int.temp_25 = 0
-return int.temp_25
-func end
-func begin func2
-args int.c.1.func2
-int.s.2.func2 = int.c.1.func2
-int.temp_26 = 0
-int.temp_27 = int.c.1.func2 == int.temp_26
-if int.temp_27 goto label_6
-goto label_7
-label_6:
-call void_func
-return int.c.1.func2
-goto label_5
-label_7:
-int.temp_28 = 1
-int.temp_29 = int.c.1.func2 == int.temp_28
-if int.temp_29 goto label_8
-goto label_9
+int.temp_4 = 0
+int.i.1 = int.temp_4
+label_4:
+int.temp_6 = 9
+int.temp_5 = int.i.1 < int.temp_6
+if int.temp_5 goto label_5
+goto label_6
+label_5:
+int.temp_7 = 0
+int.j.1 = int.temp_7
 label_8:
-int.temp_31 = 1
-int.temp_30 = int.c.1.func2 + int.temp_31
-return int.temp_30
-goto label_5
+int.temp_10 = 9
+int.temp_9 = int.temp_10 - int.i.1
+int.temp_8 = int.j.1 < int.temp_9
+if int.temp_8 goto label_9
+goto label_10
 label_9:
-goto label_5
-label_5:func end
-func begin main
-int.temp_32 = 25
-int.k.0 = int.temp_32
-int.temp_33 = 10
-int.l.0 = int.temp_33
-decl int.arr.1(8)
-int.temp_34 = 3
-int.a.1 = int.temp_34
-int.temp_35 = 5
-int.b.1 = int.temp_35
-int.temp_36 = int.a.1 * int.b.1
-int.c.1 = int.temp_36
-int.temp_37 = 0
-int.d.1 = int.temp_37
-int.temp_39 = 3
-int.temp_38 = int.a.1 == int.temp_39
-int.temp_40 = int.temp_38 > 0
-if int.temp_40 goto label_12
+int.temp_12 = int.j.1
+int.temp_14 = 1
+int.temp_13 = int.j.1 + int.temp_14
+int.temp_15 = int.temp_13
+int.temp_11 = int.arr.1(int.temp_12) > int.arr.1(int.temp_15)
+if int.temp_11 goto label_12
 goto label_13
 label_12:
-int.temp_42 = 5
-int.temp_41 = int.b.1 == int.temp_42
-int.temp_43 = int.temp_41 > 0
-if int.temp_43 goto label_14
-goto label_13
-label_14:
-int.temp_40 = 1
-goto label_15
+int.temp_16 = int.j.1
+int.t.4 = int.arr.1(int.temp_16)
+int.temp_18 = 1
+int.temp_17 = int.j.1 + int.temp_18
+int.temp_19 = int.temp_17
+int.temp_20 = int.j.1
+int.arr.1(int.temp_20) = int.arr.1(int.temp_19)
+int.temp_22 = 1
+int.temp_21 = int.j.1 + int.temp_22
+int.temp_23 = int.temp_21
+int.arr.1(int.temp_23) = int.t.4
 label_13:
-int.temp_40 = 0
-label_15:
-if int.temp_40 goto label_10
-goto label_11
-label_10:
-int.temp_44 = 0
-int.i.2 = int.temp_44
-label_16:
-int.temp_45 = int.i.2 < int.c.1
-if int.temp_45 goto label_17
-goto label_18
-label_17:
-int.d.1 = int.d.1 + 1
-label_19:
-int.i.2 = int.i.2 + 1
-goto label_16
-label_18:
 label_11:
-label_20:
-int.temp_46 = int.c.1 == int.d.1
-if int.temp_46 goto label_21
-goto label_22
-label_21:
-int.temp_47 = int.a.1 > int.b.1
-if int.temp_47 goto label_23
-goto label_24
-label_23:
-int.a.1 = int.a.1 - 1
-goto label_25
-label_24:
-int.b.1 = int.b.1 - 1
-label_25:
-int.temp_48 = int.a.1 == int.b.1
-if int.temp_48 goto label_26
-goto label_27
-label_26:
-goto label_22
-label_27:
-goto label_20
-label_22:
-param int.a.1
-param int.b.1
-call func1
-refparam int.temp_49
-int.r.1 = int.temp_49
-param int.r.1
-call func2
-refparam int.temp_50
-int.temp_51 = 1
-int.temp_52 = 1
-int.temp_53 = 1
-int.temp_54 = int.temp_51
-int.temp_54 = int.temp_54 * 2
-int.temp_54 = int.temp_54 + int.temp_52
-int.temp_54 = int.temp_54 * 2
-int.temp_54 = int.temp_54 + int.temp_53
-int.arr.1(int.temp_54) = int.temp_50
-call sahib
-refparam int.temp_55
-int.p.1 = int.temp_55
-int.temp_57 = 0
-int.temp_56 = int.r.1 == int.temp_57
-int.temp_58 = int.temp_56 <= 0
-if int.temp_58 goto label_30
-goto label_31
-label_30:
-int.temp_60 = 0
-int.temp_59 = int.p.1 == int.temp_60
-int.temp_61 = int.temp_59 <= 0
-if int.temp_61 goto label_32
-goto label_31
-label_32:
-int.temp_58 = 0
-goto label_33
-label_31:
-int.temp_58 = 1
-label_33:
-if int.temp_58 goto label_28
-goto label_29
-label_28:
-float.temp_62 = 3.200000
-float.q.2 = float.temp_62
-float.temp_63 = float.q.2 + int.p.1
-float.q.2 = float.temp_63
-label_29:
-int.temp_65 = 12
-int.temp_64 = int.a.1 + int.temp_65
-int.a.1 = int.temp_64
-int.temp_67 = 12
-int.temp_66 = int.b.1 + int.temp_67
-int.b.1 = int.temp_66
-int.temp_69 = 12
-int.temp_68 = int.r.1 + int.temp_69
-int.r.1 = int.temp_68
-int.temp_71 = 13
-int.temp_70 = int.p.1 + int.temp_71
-int.p.1 = int.temp_70
-int.temp_73 = 1
-int.temp_74 = 1
-int.temp_75 = 1
-int.temp_76 = int.temp_73
-int.temp_76 = int.temp_76 * 2
-int.temp_76 = int.temp_76 + int.temp_74
-int.temp_76 = int.temp_76 * 2
-int.temp_76 = int.temp_76 + int.temp_75
-int.temp_77 = int.arr.1(int.temp_76)
-int.temp_78 = 12
-int.temp_72 = int.temp_77 + int.temp_78
-int.temp_79 = 1
-int.temp_80 = 1
-int.temp_81 = 1
-int.temp_82 = int.temp_79
-int.temp_82 = int.temp_82 * 2
-int.temp_82 = int.temp_82 + int.temp_80
-int.temp_82 = int.temp_82 * 2
-int.temp_82 = int.temp_82 + int.temp_81
-int.arr.1(int.temp_82) = int.temp_72
-int.temp_83 = 1
-int.temp_84 = 1
-int.temp_85 = 1
-int.temp_86 = int.temp_83
-int.temp_86 = int.temp_86 * 2
-int.temp_86 = int.temp_86 + int.temp_84
-int.temp_86 = int.temp_86 * 2
-int.temp_86 = int.temp_86 + int.temp_85
-int.temp_87 = int.arr.1(int.temp_86)
-int.lo.1 = int.temp_87
-int.temp_89 = 10
-int.temp_88 = int.k.0 - int.temp_89
-int.k.0 = int.temp_88
-int.temp_91 = 5
-int.temp_90 = int.l.0 + int.temp_91
-int.l.0 = int.temp_90
+int.j.1 = int.j.1 + 1
+goto label_8
+label_10:
+label_7:
+int.i.1 = int.i.1 + 1
+goto label_4
+label_6:
+print "Sorted Array : "
+print "\n" 
+int.temp_24 = 0
+int.i.1 = int.temp_24
+label_14:
+int.temp_26 = 10
+int.temp_25 = int.i.1 < int.temp_26
+if int.temp_25 goto label_15
+goto label_16
+label_15:
+int.temp_27 = int.i.1
+print int.arr.1(int.temp_27)
+print "\n" 
+label_17:
+int.i.1 = int.i.1 + 1
+goto label_14
+label_16:
 func end

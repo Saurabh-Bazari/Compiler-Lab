@@ -43,6 +43,8 @@ FOR		"for"
 WHILE	"while"
 ELSE	"else"
 BREAK   "break"
+PRINT 	"print"
+READ	"read"
 CONTINUE 	"continue"
 SWITCH		"switch"
 CASE 		"case"
@@ -54,6 +56,7 @@ LIBRARY 						(\#include[ \n\t]*\<.+\>)|((\#include[ \t\n]*\".+\"))
 ID								([A-Za-z_]([A-Za-z0-9_])*)
 WHITE_SPACES 					([ \t]+)
 NEW_LINE 						([\n])
+STRING							\".*?[^\\]\"
 
 %%
 {lineComment}   {}
@@ -95,6 +98,9 @@ NEW_LINE 						([\n])
 {CASE}     	 	{return CASE;}
 {DEFAULT} 	  	{return DEFAULT;}
 {COLON}    		{return COLON;}
+{PRINT}			{return PRINT;}
+{STRING}		{yylval.stringVal = strdup(yytext);return STRING;}
+{READ}			{return READ;}	
 
 {INTEGERS}				{yylval.stringVal = strdup(yytext);return INTEGERS;}
 {LIBRARY}				{yylval.stringVal = strdup(yytext);return LIBRARY;}

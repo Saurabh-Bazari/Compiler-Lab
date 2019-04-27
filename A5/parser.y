@@ -62,15 +62,18 @@
 	vector<vector<string>> gfcallparam2d;
 	vector< variable * > gparams;
 	void SymTablePrint();
+	string convert(string s);
 	int checkOutofBound(vector<int> v);
 	int findScope(string gid);
 	string decideintfloat(string a, string b);
 	variable * gvar;
 	string chk;
+	int printFlag = 0;
 	vector<vector<int>> gdimv2d;
 	vector<string> brk ,cont;
 	FILE * f = fopen("o.txt", "w");
 	vector<ptr*> funcList;
+
 	vector<vector<string>> brlist;
 %}
 
@@ -80,8 +83,8 @@
 	char * stringVal;
 }
 
-%token ADD SUB MUL DIV GT LT GE LBP RBP LE EQ NE MAIN INT FLOAT RETURN OR AND IF FOR  WHILE ELSE BREAK CONTINUE INTEGERS FLOATING_POINTS ID SEMI LC RC LB RB COMMA EQUAL  MOD LIBRARY VOID SWITCH CASE DEFAULT COLON 
-%type<Ptr> grammar_start libraries decls decl break continue var_decl type var_list var id br_list br_list1 func_decl lbf lcf rcf func_end decl_plist decl_pl decl_param body stmts stmt exp case_exp default_exp return_exp exp_type_1 exp_type_2 exp_type_3 arith_exp_type_1 arith_exp_type_2 unary_exp term func_call args args_list consts intg floats plus_minus_op mul_div_op relation_op unary_operator
+%token ADD SUB MUL DIV GT LT GE LBP RBP LE EQ NE MAIN INT FLOAT PRINT RETURN OR AND IF FOR READ WHILE ELSE BREAK CONTINUE INTEGERS FLOATING_POINTS ID SEMI LC RC LB RB COMMA EQUAL  MOD LIBRARY VOID SWITCH CASE DEFAULT COLON STRING
+%type<Ptr> grammar_start libraries decls decl break continue var_decl type var_list var id br_list br_list1 func_decl lbf lcf rcf func_end decl_plist decl_pl decl_param body stmts stmt exp case_exp default_exp return_exp exp_type_1 exp_type_2 exp_type_3 arith_exp_type_1 arith_exp_type_2 unary_exp term func_call args args_list args1 args_list1 consts intg floats plus_minus_op mul_div_op relation_op unary_operator string
 
 %start	grammar_start
 
@@ -151,7 +154,7 @@ decl :  			func_decl
 																(t->children).pb($1);
 																$$ = t; 
 															}
-					| exp SEMI 																						// check??
+					| exp SEMI 																						
 															{
 																ptr * t = new ptr;																
 																t->tag = "STMTEXP";
@@ -236,7 +239,7 @@ var : 				id
 
 																if( SymTable[gScope].find(gid)==SymTable[gScope].end() ){
 																	if(gScope==2 && gparams.size()!=0 && SymTable[1].find(gid)!=SymTable[1].end() ){
-																		cout << "Semantic Error : Redecleration of param as var " << gid << " in line no. " << yylineno<< endl;
+																		cout << "Semantic Error : Redecleration of param as variable " << gid << " in line no. " << yylineno<< endl;
 																		semanticERROR = 1;
 																	}
 																	else{
@@ -343,6 +346,9 @@ br_list1 : 			LBP exp_type_1 RBP
 																t->gScope = gScope;
 																(t->children).pb($2);
 																t->value=1;
+																gdimv2d.pb(gdimv);
+																gdimv.clear();
+																gdimv.pb(($2)->value);
 																$$ = t;
 															}
 					| br_list1 LBP exp_type_1 RBP 
@@ -353,6 +359,7 @@ br_list1 : 			LBP exp_type_1 RBP
 																(t->children).pb($1);
 																(t->children).pb($3);
 																t->value=$1->value+1;
+																gdimv.pb(($3)->value);
 																$$ = t;
 															}
 
@@ -664,7 +671,85 @@ stmt:				var_decl
 																(t->children).pb($3);
 																$$ = t;	
 															}
+					| PRINT LB args1 RB	SEMI     			{
+																ptr * t = new ptr;
+																t->tag = "PRINTEXP";
+																t->gScope = gScope;
+																(t->children).pb($3);
+																$$ = t;	
+															}
+					| READ LB args RB SEMI	     			{
+																ptr * t = new ptr;
+																t->tag = "READEXP";
+																t->gScope = gScope;
+																(t->children).pb($3);
+																$$ = t;	
+															}
 					| error SEMI							{ yyerrok; }
+					
+args1 	:  	args_list1 								
+															{
+																ptr * t = new ptr;
+																t->tag = "ARGS1";
+																t->gScope = gScope;
+																(t->children).pb($1);
+																$$ = t;
+															}
+		| 													
+															{
+																ptr * t = new ptr;
+																t->gScope = gScope;
+																t->tag = "ARGS1";
+																$$ = t;
+															}
+		;
+
+args_list1	:	args_list1 COMMA arith_exp_type_1 			
+															{
+																ptr * t = new ptr;
+																t->tag = "ARGSLIST1";
+																t->svalue = "1";
+																t->gScope = gScope;
+																(t->children).pb($1);
+																(t->children).pb($3);
+																$$ = t;
+															}
+			|	arith_exp_type_1 							
+															{
+																ptr * t = new ptr;
+																t->tag = "ARGSLIST1";
+																t->svalue = "2";
+																t->gScope = gScope;
+																(t->children).pb($1);
+																$$ = t;
+															}
+			| args_list1 COMMA string 			
+															{
+																ptr * t = new ptr;
+																t->tag = "ARGSLIST1";
+																t->svalue = "3";
+																t->gScope = gScope;
+																(t->children).pb($1);
+																(t->children).pb($3);
+																$$ = t;
+															}
+			|	string 							
+															{
+																ptr * t = new ptr;
+																t->tag = "ARGSLIST1";
+																t->svalue = "4";
+																t->gScope = gScope;
+																(t->children).pb($1);
+																$$ = t;
+															}
+
+string : 		STRING                              {
+														ptr * t = new ptr;
+														t->tag = "STRING";
+														t->gScope = gScope;
+														t->svalue = yylval.stringVal;
+														$$ = t;
+													}
 
 break:				BREAK										
 															{
@@ -786,6 +871,10 @@ exp :			id EQUAL exp_type_1
 																		cout<< "Semantic Error : Invalid dimensions of array " << $1->svalue << " in lineno " << yylineno <<  endl;
 																		semanticERROR = 1;																		
 																	}
+																	else if(checkOutofBound(SymTable[scp][$1->svalue]->dim))
+																	{
+																		cout << "Semantic Error : Out Of Bound array " << $1->svalue << " in lineno. " << yylineno << endl;
+																	}
 																	else{
 																		t->dimptrorg = SymTable[scp][$1->svalue]->dim;																		
 																		t->dtype = SymTable[scp][$1->svalue]->dtype;
@@ -795,7 +884,9 @@ exp :			id EQUAL exp_type_1
 																t->gScope = gScope;
 																(t->children).pb($1);
 																(t->children).pb($2);
-																(t->children).pb($4);
+																(t->children).pb($4);t->dimptr=gdimv;
+																		gdimv = gdimv2d.back();
+																		gdimv2d.pop_back();
 																$$ = t;
 															}
 
@@ -807,6 +898,7 @@ exp_type_1 	:		exp_type_1 OR exp_type_2
 																(t->children).pb($1);
 																(t->children).pb($3);
 																t->dtype = decideintfloat($1->dtype , $3->dtype);
+																t->value = 0;
 																$$ = t;
 															}
 					| 	exp_type_2 
@@ -816,6 +908,7 @@ exp_type_1 	:		exp_type_1 OR exp_type_2
 																t->gScope = gScope;
 																(t->children).pb($1);
 																t->dtype = $1->dtype;
+																t->value = $1->value;
 																$$ = t;
 															}
 					;
@@ -827,6 +920,7 @@ exp_type_2 	:	exp_type_2 AND exp_type_3 					{
 																(t->children).pb($1);
 																(t->children).pb($3);
 																t->dtype = decideintfloat($1->dtype , $3->dtype);
+																t->value = 0;
 																$$ = t;
 															}
 				|	exp_type_3 								
@@ -836,6 +930,7 @@ exp_type_2 	:	exp_type_2 AND exp_type_3 					{
 																t->gScope = gScope;
 																(t->children).pb($1);
 																t->dtype = $1->dtype;
+																t->value = $1->value;
 																$$ = t;
 															}
 				;
@@ -854,6 +949,7 @@ exp_type_3 	:			exp_type_3 relation_op arith_exp_type_1
 																	cout<<"Semantic Error : Relation operator used with non-integer type in lineno. "<< yylineno <<endl;
 																	semanticERROR=1;
 																}
+																t->value = 0;
 																$$ = t;
 																
 															}
@@ -864,6 +960,7 @@ exp_type_3 	:			exp_type_3 relation_op arith_exp_type_1
 																t->gScope = gScope;
 																(t->children).pb($1);
 																t->dtype = $1->dtype;
+																t->value = $1->value;
 																$$ = t;
 															}
 						;
@@ -877,6 +974,7 @@ arith_exp_type_1 	:	arith_exp_type_1 plus_minus_op arith_exp_type_2
 																(t->children).pb($2);
 																(t->children).pb($3);
 																t->dtype = decideintfloat($1->dtype , $3->dtype);
+																t->value = 0;
 																$$ = t;
 															}
 					|	arith_exp_type_2 				
@@ -886,6 +984,7 @@ arith_exp_type_1 	:	arith_exp_type_1 plus_minus_op arith_exp_type_2
 																t->gScope = gScope;
 																(t->children).pb($1);
 																t->dtype = $1->dtype;
+																t->value = $1->value;
 																$$ = t;
 															}
 					;
@@ -899,6 +998,7 @@ arith_exp_type_2 	: 	arith_exp_type_2 mul_div_op unary_exp
 																(t->children).pb($2);
 																(t->children).pb($3);
 																t->dtype = decideintfloat($1->dtype , $3->dtype) ;
+																t->value = 0;
 																$$ = t;	
 															}
 					| 	unary_exp 							
@@ -908,6 +1008,7 @@ arith_exp_type_2 	: 	arith_exp_type_2 mul_div_op unary_exp
 																t->gScope = gScope;
 																(t->children).pb($1);
 																t->dtype = $1->dtype;
+																t->value = $1->value;
 																$$ = t;
 															}
 					;
@@ -920,8 +1021,10 @@ unary_exp 	: 	unary_operator term
 																(t->children).pb($1);
 																(t->children).pb($2);
 																t->dtype = $2->dtype;
+																t->value = 0;
 																$$ = t;
 															}
+					
 					| 	term 
 															{
 																ptr * t = new ptr;
@@ -929,6 +1032,7 @@ unary_exp 	: 	unary_operator term
 																t->gScope = gScope;
 																(t->children).pb($1);
 																t->dtype = $1->dtype;
+																t->value = $1->value;
 																$$ = t;
 															}
 					;
@@ -939,6 +1043,7 @@ term 	:	LB exp_type_1 RB
 																t->tag = "TERM";
 																t->gScope = gScope;
 																(t->children).pb($2);
+																t->value = $2->value;
 																t->dtype = $2->dtype;
 																$$ = t;
 															}
@@ -949,6 +1054,7 @@ term 	:	LB exp_type_1 RB
 																t->gScope = gScope;
 																(t->children).pb($1);
 																t->dtype = $1->dtype;
+																t->value = 0;
 																$$ = t;
 															}
 		|	consts 											
@@ -957,6 +1063,7 @@ term 	:	LB exp_type_1 RB
 																t->tag = "TERM";
 																t->gScope = gScope;
 																t->dtype = $1->dtype;
+																t->value = $1->value;
 																(t->children).pb($1);
 																$$ = t;
 															}
@@ -977,6 +1084,7 @@ term 	:	LB exp_type_1 RB
 
 																t->tag = "TERM";
 																(t->children).pb($1);
+																t->value = 0;
 																$$ = t;
 															}
 		|   id br_list1
@@ -995,6 +1103,10 @@ term 	:	LB exp_type_1 RB
 																		cout << "Semantic Error : Invalid dimension of array " << $1->svalue << " in lineno. " << yylineno << endl;
 																		semanticERROR = 1;																		
 																	}
+																	else if(checkOutofBound(SymTable[scp][$1->svalue]->dim))
+																	{
+																		cout << "Semantic Error : Out Of Bound array " << $1->svalue << " in lineno. " << yylineno << endl;
+																	}
 																	else{
 																		t->dimptrorg = SymTable[scp][$1->svalue]->dim;
 																		t->dtype = SymTable[scp][$1->svalue]->dtype;
@@ -1004,6 +1116,10 @@ term 	:	LB exp_type_1 RB
 																t->gScope = gScope;
 																(t->children).pb($1);
 																(t->children).pb($2);
+																t->dimptr=gdimv;
+																gdimv = gdimv2d.back();
+																gdimv2d.pop_back();
+																t->value = 0;
 																$$ = t;												
 															}
 
@@ -1095,6 +1211,7 @@ consts 	:	 intg
 																t->tag = "CONSTS";
 																(t->children).pb($1);
 																t->dtype = "int";
+																t->value = $1->value;
 																$$ = t;
 															}
 			| floats 						
@@ -1104,6 +1221,7 @@ consts 	:	 intg
 																t->tag = "CONSTS";
 																(t->children).pb($1);
 																t->dtype = "float";
+																t->value = $1->value;
 																$$ = t;
 															}
 			;
@@ -1271,16 +1389,14 @@ void PrintTree(ptr *n,int cnt)
 
 	printSpace(cnt);
 	if(n==NULL){
-		cout<<"NULL";
 		return;
 	}
-
-	cout <<n->tag<<endl;
 	for (int i = 0; i < (n->children).size(); ++i)
 	{
 		PrintTree((n->children)[i],cnt+1);
 	}
 }
+
 string decideintfloat(string s1,string s2){
 	if( s1 == "float" || s2 == "float"){
 		return "float";
@@ -1289,18 +1405,18 @@ string decideintfloat(string s1,string s2){
 		return "int";
 	}
 }
+
 int checkOutofBound(vector<int> v){
+
 	int n=gdimv.size();
-	if(gdimv.size()!=v.size()){
-		return 0;
-	}
 	for(int i=0;i<n;i++){
 		if(gdimv[i]>=v[i]){
-			return 0;
+			return i+1;
 		}
 	}
-	return 1;
+	return 0;
 }
+
 void SymTablePrint()
 {
 	cout << "Sym Table" << endl;
@@ -1332,6 +1448,7 @@ int findScope(string gid){
 	}
 	return -1;
 }
+
 int temp = -1;
 
 string getTemp(){
@@ -1349,7 +1466,6 @@ string getLabel(){
 	l += to_string(label);
 	return l;
 }
-
 
 string generateCode(ptr * root){
 	vector<ptr*> v = root->children;
@@ -1369,7 +1485,6 @@ string generateCode(ptr * root){
 			string val1 = generateCode(v[0]);
 		}
 	}else if(root->tag=="EXP"){
-
 		if(v.size()==2)
 		{
 			string val1 = generateCode(v[1]);
@@ -1400,8 +1515,6 @@ string generateCode(ptr * root){
 				fprintf(f, "%s.%s.%d(int.%s) = %s.%s\n", root->dtype.c_str(), t.c_str(), v[0]->gScope, var1.c_str(), v[2]->dtype.c_str(), val1.c_str());
 			}
 		}
-
-
 	}else if(root->tag=="BRLIST1"){
 		if(v.size()==1){
 			string t = generateCode(v[0]);
@@ -1506,12 +1619,16 @@ string generateCode(ptr * root){
 				fprintf(f, "int.%s = int.%s * %d\n", var1.c_str(), var1.c_str(), dimptrorg[i+1]);
 				fprintf(f, "int.%s = int.%s + int.%s\n", var1.c_str(), var1.c_str(), list[i+1].c_str());
 			}
-			string temp = getTemp();
-			if(v[0]->gScope>=1)	
-				fprintf(f, "%s.%s = %s.%s.%d%s(int.%s)\n", root->dtype.c_str(), temp.c_str(), root->dtype.c_str(), t.c_str(), v[0]->gScope, currFunc.c_str(), var1.c_str());
-			else{
-				fprintf(f, "%s.%s = %s.%s.%d(int.%s)\n", root->dtype.c_str(), temp.c_str(),  root->dtype.c_str(), t.c_str(), v[0]->gScope, var1.c_str());
+			string temp;
+			if(v[0]->gScope>=1){
+				temp = t + "." + to_string(v[0]->gScope) + currFunc + "(int." + var1 + ")";
+			}else{
+				temp = t + "." + to_string(v[0]->gScope) + "(int." + var1 + ")";
 			}
+			//	fprintf(f, "%s.%s = %s.%s.%d%s(int.%s)\n", root->dtype.c_str(), temp.c_str(), root->dtype.c_str(), t.c_str(), v[0]->gScope, currFunc.c_str(), var1.c_str());
+			//else{
+			//	fprintf(f, "%s.%s = %s.%s.%d(int.%s)\n", root->dtype.c_str(), temp.c_str(),  root->dtype.c_str(), t.c_str(), v[0]->gScope, var1.c_str());
+			//}
 			return temp;
 		}
 	}else if(root->tag=="INTG" || root->tag=="FLOATS"){
@@ -1579,7 +1696,6 @@ string generateCode(ptr * root){
 				var1 += to_string(temp[i]);
 			}
 		}
-
 		var1 += ".";
 		var1 += to_string(root->gScope);
 		if(root->gScope>=1){
@@ -1647,6 +1763,8 @@ string generateCode(ptr * root){
 			fprintf(f, "return %s.%s\n", v[0]->dtype.c_str() ,var1.c_str());
 		}
 	}else if(root->tag=="FUNCCALL"){
+		int temp = printFlag;
+		printFlag = 0;
 		string fName = v[0]->svalue;
 		callFunc.pb(fName);
 		generateCode(v[1]);
@@ -1657,31 +1775,82 @@ string generateCode(ptr * root){
 			var1 = getTemp();
 			fprintf(f, "refparam %s.%s\n", FuncTable[fName]->returntype.c_str(), var1.c_str());
 		}
+		printFlag = temp;
 		return var1;
+	}else if(root->tag=="PRINTEXP"){
+		generateCode(v[0]);
+		fprintf(f, "print \"\\n\" \n");
+	}else if(root->tag=="ARGS1"){
+		if(v.size()!=0){
+			vector<string> param;
+			para.pb(param);
+			generateCode(v[0]);
+			for(string s : para[para.size()-1]){
+				fprintf(f, "print %s\n", s.c_str());
+			}
+			para.pop_back();
+			return "";
+		}
+	}else if(root->tag=="ARGSLIST1"){
+		if(root->svalue=="1"){
+			generateCode(v[0]);
+			string t = "";
+			t += v[1]->dtype;
+			t += ".";
+			t += generateCode(v[1]);
+			para[para.size()-1].pb(t);
+		}else if(root->svalue=="2"){
+			string t = "";
+			t += v[0]->dtype;
+			t += ".";
+			t += generateCode(v[0]);
+			para[para.size()-1].pb(t);
+		}else if(root->svalue=="3"){
+			generateCode(v[0]);
+			string str = v[1]->svalue;
+			string t = "";
+			t += str;
+			para[para.size()-1].pb(t);
+		}else{
+			string str = v[0]->svalue;
+			string t = "";
+			t += str;
+			para[para.size()-1].pb(t);
+		}
+	}else if(root->tag=="READEXP"){
+		printFlag = 1;
+		generateCode(v[0]);
+		printFlag = 0;
 	}else if(root->tag=="ARGS"){
 		if(v.size()!=0){
 			vector<string> param;
 			para.pb(param);
 			generateCode(v[0]);
-			vector<variable *> ptype = FuncTable[callFunc[callFunc.size()-1]]->params;
-			auto it = ptype.begin();
 			for(string s : para[para.size()-1]){
-				fprintf(f, "param %s.%s\n", (*it)->dtype.c_str(), s.c_str());
-				++it;
+				if(!printFlag)
+					fprintf(f, "param %s\n", s.c_str());
+				else
+					fprintf(f, "read %s\n", s.c_str());
 			}
 			para.pop_back();
 			return "";
 		}
 	}else if(root->tag=="ARGSLIST"){
 		if(v.size()==1){
-			para[para.size()-1].pb(generateCode(v[0]));
+			string t = "";
+			t += v[0]->dtype;
+			t += ".";
+			t += generateCode(v[0]);
+			para[para.size()-1].pb(t);
 		}else{
 			generateCode(v[0]);
-			string t = generateCode(v[1]);
+			string t = "";
+			t += v[1]->dtype;
+			t += ".";
+			t += generateCode(v[1]);
 			para[para.size()-1].pb(t);
 		}
-	}else if(root->tag=="VARARRAY")
-	{
+	}else if(root->tag=="VARARRAY"){
 		string t = v[0]->svalue;
 		int a = 1;
 		vector<int> temp = root->dimptr;
@@ -1702,6 +1871,9 @@ string generateCode(ptr * root){
 	}
 	return "";
 }
+//string convert(string s){
+//	return "\"+"+s+"+"\"";
+//}
 
 void generateFunc(ptr * root){
 	fprintf(f, "func begin %s\n", root->svalue.c_str());
@@ -1726,7 +1898,7 @@ int main(){
 		SymTable.pb(mp);
 		yyparse();
 		//SymTablePrint();
-		// PrintTree(treeRoot,0);
+		//PrintTree(treeRoot,0);
 		for( ptr * p : funcList){
 			generateFunc(p);
 		}

@@ -13,7 +13,7 @@
 
  #line 8 "/usr/share/bison++/bison.h"
 
-#line 77 "parser.y"
+#line 80 "parser.y"
 typedef union 
 {
 	struct ptr* Ptr;
@@ -206,32 +206,35 @@ typedef
 #define	MAIN	270
 #define	INT	271
 #define	FLOAT	272
-#define	RETURN	273
-#define	OR	274
-#define	AND	275
-#define	IF	276
-#define	FOR	277
-#define	WHILE	278
-#define	ELSE	279
-#define	BREAK	280
-#define	CONTINUE	281
-#define	INTEGERS	282
-#define	FLOATING_POINTS	283
-#define	ID	284
-#define	SEMI	285
-#define	LC	286
-#define	RC	287
-#define	LB	288
-#define	RB	289
-#define	COMMA	290
-#define	EQUAL	291
-#define	MOD	292
-#define	LIBRARY	293
-#define	VOID	294
-#define	SWITCH	295
-#define	CASE	296
-#define	DEFAULT	297
-#define	COLON	298
+#define	PRINT	273
+#define	RETURN	274
+#define	OR	275
+#define	AND	276
+#define	IF	277
+#define	FOR	278
+#define	READ	279
+#define	WHILE	280
+#define	ELSE	281
+#define	BREAK	282
+#define	CONTINUE	283
+#define	INTEGERS	284
+#define	FLOATING_POINTS	285
+#define	ID	286
+#define	SEMI	287
+#define	LC	288
+#define	RC	289
+#define	LB	290
+#define	RB	291
+#define	COMMA	292
+#define	EQUAL	293
+#define	MOD	294
+#define	LIBRARY	295
+#define	VOID	296
+#define	SWITCH	297
+#define	CASE	298
+#define	DEFAULT	299
+#define	COLON	300
+#define	STRING	301
 
 
 #line 169 "/usr/share/bison++/bison.h"
@@ -295,11 +298,13 @@ static const int NE;
 static const int MAIN;
 static const int INT;
 static const int FLOAT;
+static const int PRINT;
 static const int RETURN;
 static const int OR;
 static const int AND;
 static const int IF;
 static const int FOR;
+static const int READ;
 static const int WHILE;
 static const int ELSE;
 static const int BREAK;
@@ -321,6 +326,7 @@ static const int SWITCH;
 static const int CASE;
 static const int DEFAULT;
 static const int COLON;
+static const int STRING;
 
 
 #line 212 "/usr/share/bison++/bison.h"
@@ -344,32 +350,35 @@ static const int COLON;
 	,MAIN=270
 	,INT=271
 	,FLOAT=272
-	,RETURN=273
-	,OR=274
-	,AND=275
-	,IF=276
-	,FOR=277
-	,WHILE=278
-	,ELSE=279
-	,BREAK=280
-	,CONTINUE=281
-	,INTEGERS=282
-	,FLOATING_POINTS=283
-	,ID=284
-	,SEMI=285
-	,LC=286
-	,RC=287
-	,LB=288
-	,RB=289
-	,COMMA=290
-	,EQUAL=291
-	,MOD=292
-	,LIBRARY=293
-	,VOID=294
-	,SWITCH=295
-	,CASE=296
-	,DEFAULT=297
-	,COLON=298
+	,PRINT=273
+	,RETURN=274
+	,OR=275
+	,AND=276
+	,IF=277
+	,FOR=278
+	,READ=279
+	,WHILE=280
+	,ELSE=281
+	,BREAK=282
+	,CONTINUE=283
+	,INTEGERS=284
+	,FLOATING_POINTS=285
+	,ID=286
+	,SEMI=287
+	,LC=288
+	,RC=289
+	,LB=290
+	,RB=291
+	,COMMA=292
+	,EQUAL=293
+	,MOD=294
+	,LIBRARY=295
+	,VOID=296
+	,SWITCH=297
+	,CASE=298
+	,DEFAULT=299
+	,COLON=300
+	,STRING=301
 
 
 #line 215 "/usr/share/bison++/bison.h"
