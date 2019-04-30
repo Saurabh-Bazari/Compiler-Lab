@@ -188,7 +188,7 @@ int main(){
             case (6):{
                 int k;
                 printf("set global variable to value k and enter 1 to half the value of a");
-                scanf(k);
+                scanf(k)
                 if_else(k);
                 print_global();
                     break;
@@ -204,7 +204,7 @@ int main(){
             }
 
             case (8):{
-                printf("change a and b such that a - b =5");
+                printf("change a and b such that a - b =5")
                 relational_operator();
                 print_global();
                 break;
@@ -216,7 +216,7 @@ int main(){
             }
             case (10):{
                 // printf("check st circuit");
-                int a1,b1;
+                int a1 b1;
                 scanf(a1,b1);
                 set_global_variable(a1,b1);
                 print_global();

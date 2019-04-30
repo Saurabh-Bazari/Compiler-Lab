@@ -13,17 +13,6 @@
 
  #line 8 "/usr/share/bison++/bison.h"
 
-#line 80 "parser.y"
-typedef union 
-{
-	struct ptr* Ptr;
-	char * stringVal;
-} yy_parse_stype;
-#define YY_parse_STYPE yy_parse_stype
-#ifndef YY_USE_CLASS
-#define YYSTYPE yy_parse_stype
-#endif
-
 #line 21 "/usr/share/bison++/bison.h"
  /* %{ and %header{ and %union, during decl */
 #ifndef YY_parse_COMPATIBILITY
@@ -78,6 +67,12 @@ typedef union
 
 
  #line 68 "/usr/share/bison++/bison.h"
+#ifndef YY_USE_CLASS
+# ifndef YYSTYPE
+#  define YYSTYPE int
+#  define YYSTYPE_IS_TRIVIAL 1
+# endif
+#endif
 
 #line 68 "/usr/share/bison++/bison.h"
 /* prefix */
@@ -85,6 +80,7 @@ typedef union
 #ifndef YY_parse_DEBUG
 
  #line 71 "/usr/share/bison++/bison.h"
+#define YY_parse_DEBUG 1
 
 #line 71 "/usr/share/bison++/bison.h"
 /* YY_parse_DEBUG */
@@ -191,50 +187,27 @@ typedef
 
 
  #line 169 "/usr/share/bison++/bison.h"
-#define	ADD	258
-#define	SUB	259
-#define	MUL	260
-#define	DIV	261
-#define	GT	262
-#define	LT	263
-#define	GE	264
-#define	LBP	265
-#define	RBP	266
-#define	LE	267
-#define	EQ	268
-#define	NE	269
-#define	MAIN	270
-#define	INT	271
-#define	FLOAT	272
-#define	PRINT	273
-#define	RETURN	274
-#define	OR	275
-#define	AND	276
-#define	IF	277
-#define	FOR	278
-#define	READ	279
-#define	WHILE	280
-#define	ELSE	281
-#define	BREAK	282
-#define	CONTINUE	283
-#define	INTEGERS	284
-#define	FLOATING_POINTS	285
-#define	ID	286
-#define	SEMI	287
-#define	LC	288
-#define	RC	289
-#define	LB	290
-#define	RB	291
-#define	COMMA	292
-#define	EQUAL	293
-#define	MOD	294
-#define	LIBRARY	295
-#define	VOID	296
-#define	SWITCH	297
-#define	CASE	298
-#define	DEFAULT	299
-#define	COLON	300
-#define	STRING	301
+#define	INT	258
+#define	FLOAT	259
+#define	ID	260
+#define	EQ	261
+#define	DECL	262
+#define	ARITH_REL_OPS	263
+#define	IF	264
+#define	GOTO	265
+#define	LABEL	266
+#define	PRINTT	267
+#define	STRINGG	268
+#define	READD	269
+#define	FUNC	270
+#define	BEGINN	271
+#define	RETURN	272
+#define	END	273
+#define	PARAM	274
+#define	REFPARAM	275
+#define	CALL	276
+#define	ARGS	277
+#define	NULLL	278
 
 
 #line 169 "/usr/share/bison++/bison.h"
@@ -283,50 +256,27 @@ public:
   /* static const int token ... */
   
  #line 212 "/usr/share/bison++/bison.h"
-static const int ADD;
-static const int SUB;
-static const int MUL;
-static const int DIV;
-static const int GT;
-static const int LT;
-static const int GE;
-static const int LBP;
-static const int RBP;
-static const int LE;
-static const int EQ;
-static const int NE;
-static const int MAIN;
 static const int INT;
 static const int FLOAT;
-static const int PRINT;
-static const int RETURN;
-static const int OR;
-static const int AND;
-static const int IF;
-static const int FOR;
-static const int READ;
-static const int WHILE;
-static const int ELSE;
-static const int BREAK;
-static const int CONTINUE;
-static const int INTEGERS;
-static const int FLOATING_POINTS;
 static const int ID;
-static const int SEMI;
-static const int LC;
-static const int RC;
-static const int LB;
-static const int RB;
-static const int COMMA;
-static const int EQUAL;
-static const int MOD;
-static const int LIBRARY;
-static const int VOID;
-static const int SWITCH;
-static const int CASE;
-static const int DEFAULT;
-static const int COLON;
-static const int STRING;
+static const int EQ;
+static const int DECL;
+static const int ARITH_REL_OPS;
+static const int IF;
+static const int GOTO;
+static const int LABEL;
+static const int PRINTT;
+static const int STRINGG;
+static const int READD;
+static const int FUNC;
+static const int BEGINN;
+static const int RETURN;
+static const int END;
+static const int PARAM;
+static const int REFPARAM;
+static const int CALL;
+static const int ARGS;
+static const int NULLL;
 
 
 #line 212 "/usr/share/bison++/bison.h"
@@ -335,50 +285,27 @@ static const int STRING;
   enum YY_parse_ENUM_TOKEN { YY_parse_NULL_TOKEN=0
   
  #line 215 "/usr/share/bison++/bison.h"
-	,ADD=258
-	,SUB=259
-	,MUL=260
-	,DIV=261
-	,GT=262
-	,LT=263
-	,GE=264
-	,LBP=265
-	,RBP=266
-	,LE=267
-	,EQ=268
-	,NE=269
-	,MAIN=270
-	,INT=271
-	,FLOAT=272
-	,PRINT=273
-	,RETURN=274
-	,OR=275
-	,AND=276
-	,IF=277
-	,FOR=278
-	,READ=279
-	,WHILE=280
-	,ELSE=281
-	,BREAK=282
-	,CONTINUE=283
-	,INTEGERS=284
-	,FLOATING_POINTS=285
-	,ID=286
-	,SEMI=287
-	,LC=288
-	,RC=289
-	,LB=290
-	,RB=291
-	,COMMA=292
-	,EQUAL=293
-	,MOD=294
-	,LIBRARY=295
-	,VOID=296
-	,SWITCH=297
-	,CASE=298
-	,DEFAULT=299
-	,COLON=300
-	,STRING=301
+	,INT=258
+	,FLOAT=259
+	,ID=260
+	,EQ=261
+	,DECL=262
+	,ARITH_REL_OPS=263
+	,IF=264
+	,GOTO=265
+	,LABEL=266
+	,PRINTT=267
+	,STRINGG=268
+	,READD=269
+	,FUNC=270
+	,BEGINN=271
+	,RETURN=272
+	,END=273
+	,PARAM=274
+	,REFPARAM=275
+	,CALL=276
+	,ARGS=277
+	,NULLL=278
 
 
 #line 215 "/usr/share/bison++/bison.h"

@@ -34,21 +34,22 @@
 // } 
 
 // Driver program to test above functions 
-int n = 5;
-int d = 6;
 int main() 
 { 
-    int arr[3][3];
-    int brr[3][3];
-    int crr[3][3];
-    int i,j;
-    for(i=0;i<3;++i){
-        for(j=0;j<3;++j){
-            scanf(arr[i][j]);
-            brr[i][j] = arr[i][j];
-            crr[i][j] = arr[i][j] + brr[i][j];
-            printf(crr[i][j]);
-        }
-    }
+    // printf("Enter n: ");
+	 int i,n;
+     float k = 6.5;
+     float p = 3.5;
+     float ans = k + p;
+     printf(ans);
+    //  scanf(n);
+    //  printf("Enter " , n , " values : ");
+    //  for(i=0;i<n;++i){
+    //      scanf(k);
+    //      arr[i]=k;
+    //  }
+	// bubbleSort( n); 
+	// printf("Sorted array: \n"); 
+	// printArray( n); 
 	return 0; 
 } 

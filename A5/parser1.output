@@ -1,0 +1,3452 @@
+
+Grammar
+rule 1    @1 ->		/* empty */
+rule 2    grammar_start -> libraries decls INT MAIN @1 LB RB lcf body rcf
+rule 3    grammar_start -> error RC
+rule 4    libraries -> LIBRARY libraries
+rule 5    libraries -> LIBRARY
+rule 6    decls -> decls decl
+rule 7    decls ->		/* empty */
+rule 8    decl -> func_decl
+rule 9    decl -> var_decl
+rule 10   decl -> exp SEMI
+rule 11   decl -> error SEMI
+rule 12   var_decl -> type var_list SEMI
+rule 13   var_decl -> type var EQUAL exp_type_1 SEMI
+rule 14   type -> INT
+rule 15   type -> FLOAT
+rule 16   void -> VOID
+rule 17   var_list -> var_list COMMA var
+rule 18   var_list -> var
+rule 19   var -> id
+rule 20   var -> id br_list
+rule 21   id -> ID
+rule 22   br_list -> LBP intg RBP
+rule 23   br_list -> br_list LBP intg RBP
+rule 24   br_list1 -> LBP exp_type_1 RBP
+rule 25   br_list1 -> br_list1 LBP exp_type_1 RBP
+rule 26   @2 ->		/* empty */
+rule 27   func_decl -> type id lbf decl_plist RB @2 lcf body rcf func_end
+rule 28   @3 ->		/* empty */
+rule 29   func_decl -> void id lbf decl_plist RB @3 lcf body rcf func_end
+rule 30   lbf -> LB
+rule 31   lcf -> LC
+rule 32   rcf -> RC
+rule 33   func_end ->		/* empty */
+rule 34   @4 ->		/* empty */
+rule 35   decl_plist -> @4 decl_pl
+rule 36   decl_plist ->		/* empty */
+rule 37   decl_pl -> decl_param COMMA decl_pl
+rule 38   decl_pl -> decl_param
+rule 39   decl_param -> type var
+rule 40   body -> stmts
+rule 41   body ->		/* empty */
+rule 42   stmts -> stmt stmts
+rule 43   stmts -> stmt
+rule 44   stmt -> var_decl
+rule 45   stmt -> exp semi
+rule 46   stmt -> exp_type_1 semi
+rule 47   stmt -> FOR LB exp semi for_exp semi for_exp RB lcf body rcf
+rule 48   stmt -> WHILE LB exp_type_1 RB lcf body rcf
+rule 49   stmt -> IF LB exp_type_1 RB lcf body rcf ELSE lcf body rcf
+rule 50   stmt -> IF LB exp_type_1 RB lcf body rcf
+rule 51   stmt -> SWITCH LB exp_type_1 RB LC case_exp default_exp RC
+rule 52   stmt -> continue semi
+rule 53   stmt -> break semi
+rule 54   stmt -> return_exp semi
+rule 55   stmt -> lcf body rcf
+rule 56   stmt -> PRINT LB args1 RB semi
+rule 57   stmt -> READ LB args RB semi
+rule 58   stmt -> error SEMI
+rule 59   stmt -> error RC
+rule 60   for_exp -> exp_type_1
+rule 61   for_exp ->		/* empty */
+rule 62   semi -> SEMI
+rule 63   semi -> error SEMI
+rule 64   args1 -> args_list1
+rule 65   args1 ->		/* empty */
+rule 66   args_list1 -> args_list1 COMMA arith_exp_type_1
+rule 67   args_list1 -> arith_exp_type_1
+rule 68   args_list1 -> args_list1 COMMA string
+rule 69   args_list1 -> string
+rule 70   string -> STRING
+rule 71   break -> BREAK
+rule 72   continue -> CONTINUE
+rule 73   case_exp -> CASE LB arith_exp_type_1 RB COLON lcf stmts rcf case_exp
+rule 74   case_exp ->		/* empty */
+rule 75   default_exp -> DEFAULT COLON lcf stmts rcf
+rule 76   default_exp ->		/* empty */
+rule 77   return_exp -> RETURN
+rule 78   return_exp -> RETURN exp_type_1
+rule 79   exp -> id EQUAL exp_type_1
+rule 80   exp -> id br_list1 EQUAL exp_type_1
+rule 81   exp_type_1 -> exp_type_1 OR exp_type_2
+rule 82   exp_type_1 -> exp_type_2
+rule 83   exp_type_2 -> exp_type_2 AND exp_type_3
+rule 84   exp_type_2 -> exp_type_3
+rule 85   exp_type_3 -> exp_type_3 relation_op arith_exp_type_1
+rule 86   exp_type_3 -> arith_exp_type_1
+rule 87   arith_exp_type_1 -> arith_exp_type_1 plus_minus_op arith_exp_type_2
+rule 88   arith_exp_type_1 -> arith_exp_type_2
+rule 89   arith_exp_type_2 -> arith_exp_type_2 mul_div_op unary_exp
+rule 90   arith_exp_type_2 -> unary_exp
+rule 91   unary_exp -> unary_operator term
+rule 92   unary_exp -> term
+rule 93   term -> LB exp_type_1 RB
+rule 94   term -> func_call
+rule 95   term -> consts
+rule 96   term -> id
+rule 97   term -> id br_list1
+rule 98   func_call -> id LB args RB
+rule 99   args -> args_list
+rule 100  args ->		/* empty */
+rule 101  args_list -> args_list COMMA arith_exp_type_1
+rule 102  args_list -> arith_exp_type_1
+rule 103  consts -> intg
+rule 104  consts -> floats
+rule 105  intg -> INTEGERS
+rule 106  intg -> SUB INTEGERS
+rule 107  floats -> FLOATING_POINTS
+rule 108  floats -> SUB FLOATING_POINTS
+rule 109  plus_minus_op -> ADD
+rule 110  plus_minus_op -> SUB
+rule 111  mul_div_op -> MUL
+rule 112  mul_div_op -> DIV
+rule 113  relation_op -> GT
+rule 114  relation_op -> LT
+rule 115  relation_op -> GE
+rule 116  relation_op -> LE
+rule 117  relation_op -> EQ
+rule 118  relation_op -> NE
+rule 119  unary_operator -> SUB SUB
+rule 120  unary_operator -> ADD ADD
+
+Terminals, with rules where they appear
+
+$ (-1)
+error (256) 3 11 58 59 63
+ADD (258) 109 120
+SUB (259) 106 108 110 119
+MUL (260) 111
+DIV (261) 112
+GT (262) 113
+LT (263) 114
+GE (264) 115
+LBP (265) 22 23 24 25
+RBP (266) 22 23 24 25
+LE (267) 116
+EQ (268) 117
+NE (269) 118
+MAIN (270) 2
+INT (271) 2 14
+FLOAT (272) 15
+PRINT (273) 56
+RETURN (274) 77 78
+OR (275) 81
+AND (276) 83
+IF (277) 49 50
+FOR (278) 47
+READ (279) 57
+WHILE (280) 48
+ELSE (281) 49
+BREAK (282) 71
+CONTINUE (283) 72
+INTEGERS (284) 105 106
+FLOATING_POINTS (285) 107 108
+ID (286) 21
+SEMI (287) 10 11 12 13 58 62 63
+LC (288) 31 51
+RC (289) 3 32 51 59
+LB (290) 2 30 47 48 49 50 51 56 57 73 93 98
+RB (291) 2 27 29 47 48 49 50 51 56 57 73 93 98
+COMMA (292) 17 37 66 68 101
+EQUAL (293) 13 79 80
+LIBRARY (294) 4 5
+VOID (295) 16
+SWITCH (296) 51
+CASE (297) 73
+DEFAULT (298) 75
+COLON (299) 73 75
+STRING (300) 70
+
+Nonterminals, with rules where they appear
+
+grammar_start (46)
+    on left: 2 3
+@1 (47)
+    on left: 1, on right: 2
+libraries (48)
+    on left: 4 5, on right: 2 4
+decls (49)
+    on left: 6 7, on right: 2 6
+decl (50)
+    on left: 8 9 10 11, on right: 6
+var_decl (51)
+    on left: 12 13, on right: 9 44
+type (52)
+    on left: 14 15, on right: 12 13 27 39
+void (53)
+    on left: 16, on right: 29
+var_list (54)
+    on left: 17 18, on right: 12 17
+var (55)
+    on left: 19 20, on right: 13 17 18 39
+id (56)
+    on left: 21, on right: 19 20 27 29 79 80 96 97 98
+br_list (57)
+    on left: 22 23, on right: 20 23
+br_list1 (58)
+    on left: 24 25, on right: 25 80 97
+func_decl (59)
+    on left: 27 29, on right: 8
+@2 (60)
+    on left: 26, on right: 27
+@3 (61)
+    on left: 28, on right: 29
+lbf (62)
+    on left: 30, on right: 27 29
+lcf (63)
+    on left: 31, on right: 2 27 29 47 48 49 50 55 73 75
+rcf (64)
+    on left: 32, on right: 2 27 29 47 48 49 50 55 73 75
+func_end (65)
+    on left: 33, on right: 27 29
+decl_plist (66)
+    on left: 35 36, on right: 27 29
+@4 (67)
+    on left: 34, on right: 35
+decl_pl (68)
+    on left: 37 38, on right: 35 37
+decl_param (69)
+    on left: 39, on right: 37 38
+body (70)
+    on left: 40 41, on right: 2 27 29 47 48 49 50 55
+stmts (71)
+    on left: 42 43, on right: 40 42 73 75
+stmt (72)
+    on left: 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59,
+    on right: 42 43
+for_exp (73)
+    on left: 60 61, on right: 47
+semi (74)
+    on left: 62 63, on right: 45 46 47 52 53 54 56 57
+args1 (75)
+    on left: 64 65, on right: 56
+args_list1 (76)
+    on left: 66 67 68 69, on right: 64 66 68
+string (77)
+    on left: 70, on right: 68 69
+break (78)
+    on left: 71, on right: 53
+continue (79)
+    on left: 72, on right: 52
+case_exp (80)
+    on left: 73 74, on right: 51 73
+default_exp (81)
+    on left: 75 76, on right: 51
+return_exp (82)
+    on left: 77 78, on right: 54
+exp (83)
+    on left: 79 80, on right: 10 45 47
+exp_type_1 (84)
+    on left: 81 82, on right: 13 24 25 46 48 49 50 51 60 78 79 80 81
+    93
+exp_type_2 (85)
+    on left: 83 84, on right: 81 82 83
+exp_type_3 (86)
+    on left: 85 86, on right: 83 84 85
+arith_exp_type_1 (87)
+    on left: 87 88, on right: 66 67 73 85 86 87 101 102
+arith_exp_type_2 (88)
+    on left: 89 90, on right: 87 88 89
+unary_exp (89)
+    on left: 91 92, on right: 89 90
+term (90)
+    on left: 93 94 95 96 97, on right: 91 92
+func_call (91)
+    on left: 98, on right: 94
+args (92)
+    on left: 99 100, on right: 57 98
+args_list (93)
+    on left: 101 102, on right: 99 101
+consts (94)
+    on left: 103 104, on right: 95
+intg (95)
+    on left: 105 106, on right: 22 23 103
+floats (96)
+    on left: 107 108, on right: 104
+plus_minus_op (97)
+    on left: 109 110, on right: 87
+mul_div_op (98)
+    on left: 111 112, on right: 89
+relation_op (99)
+    on left: 113 114 115 116 117 118, on right: 85
+unary_operator (100)
+    on left: 119 120, on right: 91
+
+
+state 0
+
+    error	shift, and go to state 1
+    LIBRARY	shift, and go to state 2
+
+    grammar_start	go to state 237
+    libraries	go to state 3
+
+
+
+state 1
+
+    grammar_start  ->  error . RC   (rule 3)
+
+    RC  	shift, and go to state 4
+
+
+
+state 2
+
+    libraries  ->  LIBRARY . libraries   (rule 4)
+    libraries  ->  LIBRARY .   (rule 5)
+
+    LIBRARY	shift, and go to state 2
+
+    $default	reduce using rule 5 (libraries)
+
+    libraries	go to state 5
+
+
+
+state 3
+
+    grammar_start  ->  libraries . decls INT MAIN @1 LB RB lcf body rcf   (rule 2)
+
+    $default	reduce using rule 7 (decls)
+
+    decls	go to state 6
+
+
+
+state 4
+
+    grammar_start  ->  error RC .   (rule 3)
+
+    $default	reduce using rule 3 (grammar_start)
+
+
+
+state 5
+
+    libraries  ->  LIBRARY libraries .   (rule 4)
+
+    $default	reduce using rule 4 (libraries)
+
+
+
+state 6
+
+    grammar_start  ->  libraries decls . INT MAIN @1 LB RB lcf body rcf   (rule 2)
+    decls  ->  decls . decl   (rule 6)
+
+    error	shift, and go to state 7
+    INT 	shift, and go to state 8
+    FLOAT	shift, and go to state 9
+    ID  	shift, and go to state 10
+    VOID	shift, and go to state 11
+
+    decl	go to state 12
+    var_decl	go to state 13
+    type	go to state 14
+    void	go to state 15
+    id  	go to state 16
+    func_decl	go to state 17
+    exp 	go to state 18
+
+
+
+state 7
+
+    decl  ->  error . SEMI   (rule 11)
+
+    SEMI	shift, and go to state 19
+
+
+
+state 8
+
+    grammar_start  ->  libraries decls INT . MAIN @1 LB RB lcf body rcf   (rule 2)
+    type  ->  INT .   (rule 14)
+
+    MAIN	shift, and go to state 20
+
+    $default	reduce using rule 14 (type)
+
+
+
+state 9
+
+    type  ->  FLOAT .   (rule 15)
+
+    $default	reduce using rule 15 (type)
+
+
+
+state 10
+
+    id  ->  ID .   (rule 21)
+
+    $default	reduce using rule 21 (id)
+
+
+
+state 11
+
+    void  ->  VOID .   (rule 16)
+
+    $default	reduce using rule 16 (void)
+
+
+
+state 12
+
+    decls  ->  decls decl .   (rule 6)
+
+    $default	reduce using rule 6 (decls)
+
+
+
+state 13
+
+    decl  ->  var_decl .   (rule 9)
+
+    $default	reduce using rule 9 (decl)
+
+
+
+state 14
+
+    var_decl  ->  type . var_list SEMI   (rule 12)
+    var_decl  ->  type . var EQUAL exp_type_1 SEMI   (rule 13)
+    func_decl  ->  type . id lbf decl_plist RB @2 lcf body rcf func_end   (rule 27)
+
+    ID  	shift, and go to state 10
+
+    var_list	go to state 21
+    var 	go to state 22
+    id  	go to state 23
+
+
+
+state 15
+
+    func_decl  ->  void . id lbf decl_plist RB @3 lcf body rcf func_end   (rule 29)
+
+    ID  	shift, and go to state 10
+
+    id  	go to state 24
+
+
+
+state 16
+
+    exp  ->  id . EQUAL exp_type_1   (rule 79)
+    exp  ->  id . br_list1 EQUAL exp_type_1   (rule 80)
+
+    LBP 	shift, and go to state 25
+    EQUAL	shift, and go to state 26
+
+    br_list1	go to state 27
+
+
+
+state 17
+
+    decl  ->  func_decl .   (rule 8)
+
+    $default	reduce using rule 8 (decl)
+
+
+
+state 18
+
+    decl  ->  exp . SEMI   (rule 10)
+
+    SEMI	shift, and go to state 28
+
+
+
+state 19
+
+    decl  ->  error SEMI .   (rule 11)
+
+    $default	reduce using rule 11 (decl)
+
+
+
+state 20
+
+    grammar_start  ->  libraries decls INT MAIN . @1 LB RB lcf body rcf   (rule 2)
+
+    $default	reduce using rule 1 (@1)
+
+    @1  	go to state 29
+
+
+
+state 21
+
+    var_decl  ->  type var_list . SEMI   (rule 12)
+    var_list  ->  var_list . COMMA var   (rule 17)
+
+    SEMI	shift, and go to state 30
+    COMMA	shift, and go to state 31
+
+
+
+state 22
+
+    var_decl  ->  type var . EQUAL exp_type_1 SEMI   (rule 13)
+    var_list  ->  var .   (rule 18)
+
+    EQUAL	shift, and go to state 32
+
+    $default	reduce using rule 18 (var_list)
+
+
+
+state 23
+
+    var  ->  id .   (rule 19)
+    var  ->  id . br_list   (rule 20)
+    func_decl  ->  type id . lbf decl_plist RB @2 lcf body rcf func_end   (rule 27)
+
+    LBP 	shift, and go to state 33
+    LB  	shift, and go to state 34
+
+    $default	reduce using rule 19 (var)
+
+    br_list	go to state 35
+    lbf 	go to state 36
+
+
+
+state 24
+
+    func_decl  ->  void id . lbf decl_plist RB @3 lcf body rcf func_end   (rule 29)
+
+    LB  	shift, and go to state 34
+
+    lbf 	go to state 37
+
+
+
+state 25
+
+    br_list1  ->  LBP . exp_type_1 RBP   (rule 24)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    id  	go to state 43
+    exp_type_1	go to state 44
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 26
+
+    exp  ->  id EQUAL . exp_type_1   (rule 79)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    id  	go to state 43
+    exp_type_1	go to state 56
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 27
+
+    br_list1  ->  br_list1 . LBP exp_type_1 RBP   (rule 25)
+    exp  ->  id br_list1 . EQUAL exp_type_1   (rule 80)
+
+    LBP 	shift, and go to state 57
+    EQUAL	shift, and go to state 58
+
+
+
+state 28
+
+    decl  ->  exp SEMI .   (rule 10)
+
+    $default	reduce using rule 10 (decl)
+
+
+
+state 29
+
+    grammar_start  ->  libraries decls INT MAIN @1 . LB RB lcf body rcf   (rule 2)
+
+    LB  	shift, and go to state 59
+
+
+
+state 30
+
+    var_decl  ->  type var_list SEMI .   (rule 12)
+
+    $default	reduce using rule 12 (var_decl)
+
+
+
+state 31
+
+    var_list  ->  var_list COMMA . var   (rule 17)
+
+    ID  	shift, and go to state 10
+
+    var 	go to state 60
+    id  	go to state 61
+
+
+
+state 32
+
+    var_decl  ->  type var EQUAL . exp_type_1 SEMI   (rule 13)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    id  	go to state 43
+    exp_type_1	go to state 62
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 33
+
+    br_list  ->  LBP . intg RBP   (rule 22)
+
+    SUB 	shift, and go to state 63
+    INTEGERS	shift, and go to state 40
+
+    intg	go to state 64
+
+
+
+state 34
+
+    lbf  ->  LB .   (rule 30)
+
+    $default	reduce using rule 30 (lbf)
+
+
+
+state 35
+
+    var  ->  id br_list .   (rule 20)
+    br_list  ->  br_list . LBP intg RBP   (rule 23)
+
+    LBP 	shift, and go to state 65
+
+    $default	reduce using rule 20 (var)
+
+
+
+state 36
+
+    func_decl  ->  type id lbf . decl_plist RB @2 lcf body rcf func_end   (rule 27)
+
+    $default	reduce using rule 34 (@4)
+
+    decl_plist	go to state 66
+    @4  	go to state 67
+
+
+
+state 37
+
+    func_decl  ->  void id lbf . decl_plist RB @3 lcf body rcf func_end   (rule 29)
+
+    $default	reduce using rule 34 (@4)
+
+    decl_plist	go to state 68
+    @4  	go to state 67
+
+
+
+state 38
+
+    unary_operator  ->  ADD . ADD   (rule 120)
+
+    ADD 	shift, and go to state 69
+
+
+
+state 39
+
+    intg  ->  SUB . INTEGERS   (rule 106)
+    floats  ->  SUB . FLOATING_POINTS   (rule 108)
+    unary_operator  ->  SUB . SUB   (rule 119)
+
+    SUB 	shift, and go to state 70
+    INTEGERS	shift, and go to state 71
+    FLOATING_POINTS	shift, and go to state 72
+
+
+
+state 40
+
+    intg  ->  INTEGERS .   (rule 105)
+
+    $default	reduce using rule 105 (intg)
+
+
+
+state 41
+
+    floats  ->  FLOATING_POINTS .   (rule 107)
+
+    $default	reduce using rule 107 (floats)
+
+
+
+state 42
+
+    term  ->  LB . exp_type_1 RB   (rule 93)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    id  	go to state 43
+    exp_type_1	go to state 73
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 43
+
+    term  ->  id .   (rule 96)
+    term  ->  id . br_list1   (rule 97)
+    func_call  ->  id . LB args RB   (rule 98)
+
+    LBP 	shift, and go to state 25
+    LB  	shift, and go to state 74
+
+    $default	reduce using rule 96 (term)
+
+    br_list1	go to state 75
+
+
+
+state 44
+
+    br_list1  ->  LBP exp_type_1 . RBP   (rule 24)
+    exp_type_1  ->  exp_type_1 . OR exp_type_2   (rule 81)
+
+    RBP 	shift, and go to state 76
+    OR  	shift, and go to state 77
+
+
+
+state 45
+
+    exp_type_1  ->  exp_type_2 .   (rule 82)
+    exp_type_2  ->  exp_type_2 . AND exp_type_3   (rule 83)
+
+    AND 	shift, and go to state 78
+
+    $default	reduce using rule 82 (exp_type_1)
+
+
+
+state 46
+
+    exp_type_2  ->  exp_type_3 .   (rule 84)
+    exp_type_3  ->  exp_type_3 . relation_op arith_exp_type_1   (rule 85)
+
+    GT  	shift, and go to state 79
+    LT  	shift, and go to state 80
+    GE  	shift, and go to state 81
+    LE  	shift, and go to state 82
+    EQ  	shift, and go to state 83
+    NE  	shift, and go to state 84
+
+    $default	reduce using rule 84 (exp_type_2)
+
+    relation_op	go to state 85
+
+
+
+state 47
+
+    exp_type_3  ->  arith_exp_type_1 .   (rule 86)
+    arith_exp_type_1  ->  arith_exp_type_1 . plus_minus_op arith_exp_type_2   (rule 87)
+
+    ADD 	shift, and go to state 86
+    SUB 	shift, and go to state 87
+
+    $default	reduce using rule 86 (exp_type_3)
+
+    plus_minus_op	go to state 88
+
+
+
+state 48
+
+    arith_exp_type_1  ->  arith_exp_type_2 .   (rule 88)
+    arith_exp_type_2  ->  arith_exp_type_2 . mul_div_op unary_exp   (rule 89)
+
+    MUL 	shift, and go to state 89
+    DIV 	shift, and go to state 90
+
+    $default	reduce using rule 88 (arith_exp_type_1)
+
+    mul_div_op	go to state 91
+
+
+
+state 49
+
+    arith_exp_type_2  ->  unary_exp .   (rule 90)
+
+    $default	reduce using rule 90 (arith_exp_type_2)
+
+
+
+state 50
+
+    unary_exp  ->  term .   (rule 92)
+
+    $default	reduce using rule 92 (unary_exp)
+
+
+
+state 51
+
+    term  ->  func_call .   (rule 94)
+
+    $default	reduce using rule 94 (term)
+
+
+
+state 52
+
+    term  ->  consts .   (rule 95)
+
+    $default	reduce using rule 95 (term)
+
+
+
+state 53
+
+    consts  ->  intg .   (rule 103)
+
+    $default	reduce using rule 103 (consts)
+
+
+
+state 54
+
+    consts  ->  floats .   (rule 104)
+
+    $default	reduce using rule 104 (consts)
+
+
+
+state 55
+
+    unary_exp  ->  unary_operator . term   (rule 91)
+
+    SUB 	shift, and go to state 92
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    id  	go to state 43
+    term	go to state 93
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+
+
+
+state 56
+
+    exp  ->  id EQUAL exp_type_1 .   (rule 79)
+    exp_type_1  ->  exp_type_1 . OR exp_type_2   (rule 81)
+
+    OR  	shift, and go to state 77
+
+    $default	reduce using rule 79 (exp)
+
+
+
+state 57
+
+    br_list1  ->  br_list1 LBP . exp_type_1 RBP   (rule 25)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    id  	go to state 43
+    exp_type_1	go to state 94
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 58
+
+    exp  ->  id br_list1 EQUAL . exp_type_1   (rule 80)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    id  	go to state 43
+    exp_type_1	go to state 95
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 59
+
+    grammar_start  ->  libraries decls INT MAIN @1 LB . RB lcf body rcf   (rule 2)
+
+    RB  	shift, and go to state 96
+
+
+
+state 60
+
+    var_list  ->  var_list COMMA var .   (rule 17)
+
+    $default	reduce using rule 17 (var_list)
+
+
+
+state 61
+
+    var  ->  id .   (rule 19)
+    var  ->  id . br_list   (rule 20)
+
+    LBP 	shift, and go to state 33
+
+    $default	reduce using rule 19 (var)
+
+    br_list	go to state 35
+
+
+
+state 62
+
+    var_decl  ->  type var EQUAL exp_type_1 . SEMI   (rule 13)
+    exp_type_1  ->  exp_type_1 . OR exp_type_2   (rule 81)
+
+    OR  	shift, and go to state 77
+    SEMI	shift, and go to state 97
+
+
+
+state 63
+
+    intg  ->  SUB . INTEGERS   (rule 106)
+
+    INTEGERS	shift, and go to state 71
+
+
+
+state 64
+
+    br_list  ->  LBP intg . RBP   (rule 22)
+
+    RBP 	shift, and go to state 98
+
+
+
+state 65
+
+    br_list  ->  br_list LBP . intg RBP   (rule 23)
+
+    SUB 	shift, and go to state 63
+    INTEGERS	shift, and go to state 40
+
+    intg	go to state 99
+
+
+
+state 66
+
+    func_decl  ->  type id lbf decl_plist . RB @2 lcf body rcf func_end   (rule 27)
+
+    RB  	shift, and go to state 100
+
+
+
+state 67
+
+    decl_plist  ->  @4 . decl_pl   (rule 35)
+
+    INT 	shift, and go to state 101
+    FLOAT	shift, and go to state 9
+
+    type	go to state 102
+    decl_pl	go to state 103
+    decl_param	go to state 104
+
+
+
+state 68
+
+    func_decl  ->  void id lbf decl_plist . RB @3 lcf body rcf func_end   (rule 29)
+
+    RB  	shift, and go to state 105
+
+
+
+state 69
+
+    unary_operator  ->  ADD ADD .   (rule 120)
+
+    $default	reduce using rule 120 (unary_operator)
+
+
+
+state 70
+
+    unary_operator  ->  SUB SUB .   (rule 119)
+
+    $default	reduce using rule 119 (unary_operator)
+
+
+
+state 71
+
+    intg  ->  SUB INTEGERS .   (rule 106)
+
+    $default	reduce using rule 106 (intg)
+
+
+
+state 72
+
+    floats  ->  SUB FLOATING_POINTS .   (rule 108)
+
+    $default	reduce using rule 108 (floats)
+
+
+
+state 73
+
+    exp_type_1  ->  exp_type_1 . OR exp_type_2   (rule 81)
+    term  ->  LB exp_type_1 . RB   (rule 93)
+
+    OR  	shift, and go to state 77
+    RB  	shift, and go to state 106
+
+
+
+state 74
+
+    func_call  ->  id LB . args RB   (rule 98)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    $default	reduce using rule 100 (args)
+
+    id  	go to state 43
+    arith_exp_type_1	go to state 107
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    args	go to state 108
+    args_list	go to state 109
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 75
+
+    br_list1  ->  br_list1 . LBP exp_type_1 RBP   (rule 25)
+    term  ->  id br_list1 .   (rule 97)
+
+    LBP 	shift, and go to state 57
+
+    $default	reduce using rule 97 (term)
+
+
+
+state 76
+
+    br_list1  ->  LBP exp_type_1 RBP .   (rule 24)
+
+    $default	reduce using rule 24 (br_list1)
+
+
+
+state 77
+
+    exp_type_1  ->  exp_type_1 OR . exp_type_2   (rule 81)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    id  	go to state 43
+    exp_type_2	go to state 110
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 78
+
+    exp_type_2  ->  exp_type_2 AND . exp_type_3   (rule 83)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    id  	go to state 43
+    exp_type_3	go to state 111
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 79
+
+    relation_op  ->  GT .   (rule 113)
+
+    $default	reduce using rule 113 (relation_op)
+
+
+
+state 80
+
+    relation_op  ->  LT .   (rule 114)
+
+    $default	reduce using rule 114 (relation_op)
+
+
+
+state 81
+
+    relation_op  ->  GE .   (rule 115)
+
+    $default	reduce using rule 115 (relation_op)
+
+
+
+state 82
+
+    relation_op  ->  LE .   (rule 116)
+
+    $default	reduce using rule 116 (relation_op)
+
+
+
+state 83
+
+    relation_op  ->  EQ .   (rule 117)
+
+    $default	reduce using rule 117 (relation_op)
+
+
+
+state 84
+
+    relation_op  ->  NE .   (rule 118)
+
+    $default	reduce using rule 118 (relation_op)
+
+
+
+state 85
+
+    exp_type_3  ->  exp_type_3 relation_op . arith_exp_type_1   (rule 85)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    id  	go to state 43
+    arith_exp_type_1	go to state 112
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 86
+
+    plus_minus_op  ->  ADD .   (rule 109)
+
+    $default	reduce using rule 109 (plus_minus_op)
+
+
+
+state 87
+
+    plus_minus_op  ->  SUB .   (rule 110)
+
+    $default	reduce using rule 110 (plus_minus_op)
+
+
+
+state 88
+
+    arith_exp_type_1  ->  arith_exp_type_1 plus_minus_op . arith_exp_type_2   (rule 87)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    id  	go to state 43
+    arith_exp_type_2	go to state 113
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 89
+
+    mul_div_op  ->  MUL .   (rule 111)
+
+    $default	reduce using rule 111 (mul_div_op)
+
+
+
+state 90
+
+    mul_div_op  ->  DIV .   (rule 112)
+
+    $default	reduce using rule 112 (mul_div_op)
+
+
+
+state 91
+
+    arith_exp_type_2  ->  arith_exp_type_2 mul_div_op . unary_exp   (rule 89)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    id  	go to state 43
+    unary_exp	go to state 114
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 92
+
+    intg  ->  SUB . INTEGERS   (rule 106)
+    floats  ->  SUB . FLOATING_POINTS   (rule 108)
+
+    INTEGERS	shift, and go to state 71
+    FLOATING_POINTS	shift, and go to state 72
+
+
+
+state 93
+
+    unary_exp  ->  unary_operator term .   (rule 91)
+
+    $default	reduce using rule 91 (unary_exp)
+
+
+
+state 94
+
+    br_list1  ->  br_list1 LBP exp_type_1 . RBP   (rule 25)
+    exp_type_1  ->  exp_type_1 . OR exp_type_2   (rule 81)
+
+    RBP 	shift, and go to state 115
+    OR  	shift, and go to state 77
+
+
+
+state 95
+
+    exp  ->  id br_list1 EQUAL exp_type_1 .   (rule 80)
+    exp_type_1  ->  exp_type_1 . OR exp_type_2   (rule 81)
+
+    OR  	shift, and go to state 77
+
+    $default	reduce using rule 80 (exp)
+
+
+
+state 96
+
+    grammar_start  ->  libraries decls INT MAIN @1 LB RB . lcf body rcf   (rule 2)
+
+    LC  	shift, and go to state 116
+
+    lcf 	go to state 117
+
+
+
+state 97
+
+    var_decl  ->  type var EQUAL exp_type_1 SEMI .   (rule 13)
+
+    $default	reduce using rule 13 (var_decl)
+
+
+
+state 98
+
+    br_list  ->  LBP intg RBP .   (rule 22)
+
+    $default	reduce using rule 22 (br_list)
+
+
+
+state 99
+
+    br_list  ->  br_list LBP intg . RBP   (rule 23)
+
+    RBP 	shift, and go to state 118
+
+
+
+state 100
+
+    func_decl  ->  type id lbf decl_plist RB . @2 lcf body rcf func_end   (rule 27)
+
+    $default	reduce using rule 26 (@2)
+
+    @2  	go to state 119
+
+
+
+state 101
+
+    type  ->  INT .   (rule 14)
+
+    $default	reduce using rule 14 (type)
+
+
+
+state 102
+
+    decl_param  ->  type . var   (rule 39)
+
+    ID  	shift, and go to state 10
+
+    var 	go to state 120
+    id  	go to state 61
+
+
+
+state 103
+
+    decl_plist  ->  @4 decl_pl .   (rule 35)
+
+    $default	reduce using rule 35 (decl_plist)
+
+
+
+state 104
+
+    decl_pl  ->  decl_param . COMMA decl_pl   (rule 37)
+    decl_pl  ->  decl_param .   (rule 38)
+
+    COMMA	shift, and go to state 121
+
+    $default	reduce using rule 38 (decl_pl)
+
+
+
+state 105
+
+    func_decl  ->  void id lbf decl_plist RB . @3 lcf body rcf func_end   (rule 29)
+
+    $default	reduce using rule 28 (@3)
+
+    @3  	go to state 122
+
+
+
+state 106
+
+    term  ->  LB exp_type_1 RB .   (rule 93)
+
+    $default	reduce using rule 93 (term)
+
+
+
+state 107
+
+    arith_exp_type_1  ->  arith_exp_type_1 . plus_minus_op arith_exp_type_2   (rule 87)
+    args_list  ->  arith_exp_type_1 .   (rule 102)
+
+    ADD 	shift, and go to state 86
+    SUB 	shift, and go to state 87
+
+    $default	reduce using rule 102 (args_list)
+
+    plus_minus_op	go to state 88
+
+
+
+state 108
+
+    func_call  ->  id LB args . RB   (rule 98)
+
+    RB  	shift, and go to state 123
+
+
+
+state 109
+
+    args  ->  args_list .   (rule 99)
+    args_list  ->  args_list . COMMA arith_exp_type_1   (rule 101)
+
+    COMMA	shift, and go to state 124
+
+    $default	reduce using rule 99 (args)
+
+
+
+state 110
+
+    exp_type_1  ->  exp_type_1 OR exp_type_2 .   (rule 81)
+    exp_type_2  ->  exp_type_2 . AND exp_type_3   (rule 83)
+
+    AND 	shift, and go to state 78
+
+    $default	reduce using rule 81 (exp_type_1)
+
+
+
+state 111
+
+    exp_type_2  ->  exp_type_2 AND exp_type_3 .   (rule 83)
+    exp_type_3  ->  exp_type_3 . relation_op arith_exp_type_1   (rule 85)
+
+    GT  	shift, and go to state 79
+    LT  	shift, and go to state 80
+    GE  	shift, and go to state 81
+    LE  	shift, and go to state 82
+    EQ  	shift, and go to state 83
+    NE  	shift, and go to state 84
+
+    $default	reduce using rule 83 (exp_type_2)
+
+    relation_op	go to state 85
+
+
+
+state 112
+
+    exp_type_3  ->  exp_type_3 relation_op arith_exp_type_1 .   (rule 85)
+    arith_exp_type_1  ->  arith_exp_type_1 . plus_minus_op arith_exp_type_2   (rule 87)
+
+    ADD 	shift, and go to state 86
+    SUB 	shift, and go to state 87
+
+    $default	reduce using rule 85 (exp_type_3)
+
+    plus_minus_op	go to state 88
+
+
+
+state 113
+
+    arith_exp_type_1  ->  arith_exp_type_1 plus_minus_op arith_exp_type_2 .   (rule 87)
+    arith_exp_type_2  ->  arith_exp_type_2 . mul_div_op unary_exp   (rule 89)
+
+    MUL 	shift, and go to state 89
+    DIV 	shift, and go to state 90
+
+    $default	reduce using rule 87 (arith_exp_type_1)
+
+    mul_div_op	go to state 91
+
+
+
+state 114
+
+    arith_exp_type_2  ->  arith_exp_type_2 mul_div_op unary_exp .   (rule 89)
+
+    $default	reduce using rule 89 (arith_exp_type_2)
+
+
+
+state 115
+
+    br_list1  ->  br_list1 LBP exp_type_1 RBP .   (rule 25)
+
+    $default	reduce using rule 25 (br_list1)
+
+
+
+state 116
+
+    lcf  ->  LC .   (rule 31)
+
+    $default	reduce using rule 31 (lcf)
+
+
+
+state 117
+
+    grammar_start  ->  libraries decls INT MAIN @1 LB RB lcf . body rcf   (rule 2)
+
+    error	shift, and go to state 125
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INT 	shift, and go to state 101
+    FLOAT	shift, and go to state 9
+    PRINT	shift, and go to state 126
+    RETURN	shift, and go to state 127
+    IF  	shift, and go to state 128
+    FOR 	shift, and go to state 129
+    READ	shift, and go to state 130
+    WHILE	shift, and go to state 131
+    BREAK	shift, and go to state 132
+    CONTINUE	shift, and go to state 133
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LC  	shift, and go to state 116
+    LB  	shift, and go to state 42
+    SWITCH	shift, and go to state 134
+
+
+    var_decl	go to state 135
+    type	go to state 136
+    id  	go to state 137
+    lcf 	go to state 138
+    body	go to state 139
+    stmts	go to state 140
+    stmt	go to state 141
+    break	go to state 142
+    continue	go to state 143
+    return_exp	go to state 144
+    exp 	go to state 145
+    exp_type_1	go to state 146
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 118
+
+    br_list  ->  br_list LBP intg RBP .   (rule 23)
+
+    $default	reduce using rule 23 (br_list)
+
+
+
+state 119
+
+    func_decl  ->  type id lbf decl_plist RB @2 . lcf body rcf func_end   (rule 27)
+
+    LC  	shift, and go to state 116
+
+    lcf 	go to state 147
+
+
+
+state 120
+
+    decl_param  ->  type var .   (rule 39)
+
+    $default	reduce using rule 39 (decl_param)
+
+
+
+state 121
+
+    decl_pl  ->  decl_param COMMA . decl_pl   (rule 37)
+
+    INT 	shift, and go to state 101
+    FLOAT	shift, and go to state 9
+
+    type	go to state 102
+    decl_pl	go to state 148
+    decl_param	go to state 104
+
+
+
+state 122
+
+    func_decl  ->  void id lbf decl_plist RB @3 . lcf body rcf func_end   (rule 29)
+
+    LC  	shift, and go to state 116
+
+    lcf 	go to state 149
+
+
+
+state 123
+
+    func_call  ->  id LB args RB .   (rule 98)
+
+    $default	reduce using rule 98 (func_call)
+
+
+
+state 124
+
+    args_list  ->  args_list COMMA . arith_exp_type_1   (rule 101)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    id  	go to state 43
+    arith_exp_type_1	go to state 150
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 125
+
+    stmt  ->  error . SEMI   (rule 58)
+    stmt  ->  error . RC   (rule 59)
+
+    SEMI	shift, and go to state 151
+    RC  	shift, and go to state 152
+
+
+
+state 126
+
+    stmt  ->  PRINT . LB args1 RB semi   (rule 56)
+
+    LB  	shift, and go to state 153
+
+
+
+state 127
+
+    return_exp  ->  RETURN .   (rule 77)
+    return_exp  ->  RETURN . exp_type_1   (rule 78)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    $default	reduce using rule 77 (return_exp)
+
+    id  	go to state 43
+    exp_type_1	go to state 154
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 128
+
+    stmt  ->  IF . LB exp_type_1 RB lcf body rcf ELSE lcf body rcf   (rule 49)
+    stmt  ->  IF . LB exp_type_1 RB lcf body rcf   (rule 50)
+
+    LB  	shift, and go to state 155
+
+
+
+state 129
+
+    stmt  ->  FOR . LB exp semi for_exp semi for_exp RB lcf body rcf   (rule 47)
+
+    LB  	shift, and go to state 156
+
+
+
+state 130
+
+    stmt  ->  READ . LB args RB semi   (rule 57)
+
+    LB  	shift, and go to state 157
+
+
+
+state 131
+
+    stmt  ->  WHILE . LB exp_type_1 RB lcf body rcf   (rule 48)
+
+    LB  	shift, and go to state 158
+
+
+
+state 132
+
+    break  ->  BREAK .   (rule 71)
+
+    $default	reduce using rule 71 (break)
+
+
+
+state 133
+
+    continue  ->  CONTINUE .   (rule 72)
+
+    $default	reduce using rule 72 (continue)
+
+
+
+state 134
+
+    stmt  ->  SWITCH . LB exp_type_1 RB LC case_exp default_exp RC   (rule 51)
+
+    LB  	shift, and go to state 159
+
+
+
+state 135
+
+    stmt  ->  var_decl .   (rule 44)
+
+    $default	reduce using rule 44 (stmt)
+
+
+
+state 136
+
+    var_decl  ->  type . var_list SEMI   (rule 12)
+    var_decl  ->  type . var EQUAL exp_type_1 SEMI   (rule 13)
+
+    ID  	shift, and go to state 10
+
+    var_list	go to state 21
+    var 	go to state 22
+    id  	go to state 61
+
+
+
+state 137
+
+    exp  ->  id . EQUAL exp_type_1   (rule 79)
+    exp  ->  id . br_list1 EQUAL exp_type_1   (rule 80)
+    term  ->  id .   (rule 96)
+    term  ->  id . br_list1   (rule 97)
+    func_call  ->  id . LB args RB   (rule 98)
+
+    LBP 	shift, and go to state 25
+    LB  	shift, and go to state 74
+    EQUAL	shift, and go to state 26
+
+    $default	reduce using rule 96 (term)
+
+    br_list1	go to state 160
+
+
+
+state 138
+
+    stmt  ->  lcf . body rcf   (rule 55)
+
+    error	shift, and go to state 125
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INT 	shift, and go to state 101
+    FLOAT	shift, and go to state 9
+    PRINT	shift, and go to state 126
+    RETURN	shift, and go to state 127
+    IF  	shift, and go to state 128
+    FOR 	shift, and go to state 129
+    READ	shift, and go to state 130
+    WHILE	shift, and go to state 131
+    BREAK	shift, and go to state 132
+    CONTINUE	shift, and go to state 133
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LC  	shift, and go to state 116
+    LB  	shift, and go to state 42
+    SWITCH	shift, and go to state 134
+
+
+    var_decl	go to state 135
+    type	go to state 136
+    id  	go to state 137
+    lcf 	go to state 138
+    body	go to state 161
+    stmts	go to state 140
+    stmt	go to state 141
+    break	go to state 142
+    continue	go to state 143
+    return_exp	go to state 144
+    exp 	go to state 145
+    exp_type_1	go to state 146
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 139
+
+    grammar_start  ->  libraries decls INT MAIN @1 LB RB lcf body . rcf   (rule 2)
+
+    RC  	shift, and go to state 162
+
+    rcf 	go to state 163
+
+
+
+state 140
+
+    body  ->  stmts .   (rule 40)
+
+    $default	reduce using rule 40 (body)
+
+
+
+state 141
+
+    stmts  ->  stmt . stmts   (rule 42)
+    stmts  ->  stmt .   (rule 43)
+
+    error	shift, and go to state 125
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INT 	shift, and go to state 101
+    FLOAT	shift, and go to state 9
+    PRINT	shift, and go to state 126
+    RETURN	shift, and go to state 127
+    IF  	shift, and go to state 128
+    FOR 	shift, and go to state 129
+    READ	shift, and go to state 130
+    WHILE	shift, and go to state 131
+    BREAK	shift, and go to state 132
+    CONTINUE	shift, and go to state 133
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LC  	shift, and go to state 116
+    LB  	shift, and go to state 42
+    SWITCH	shift, and go to state 134
+
+
+    var_decl	go to state 135
+    type	go to state 136
+    id  	go to state 137
+    lcf 	go to state 138
+    stmts	go to state 164
+    stmt	go to state 141
+    break	go to state 142
+    continue	go to state 143
+    return_exp	go to state 144
+    exp 	go to state 145
+    exp_type_1	go to state 146
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 142
+
+    stmt  ->  break . semi   (rule 53)
+
+    error	shift, and go to state 165
+    SEMI	shift, and go to state 166
+
+    semi	go to state 167
+
+
+
+state 143
+
+    stmt  ->  continue . semi   (rule 52)
+
+    error	shift, and go to state 165
+    SEMI	shift, and go to state 166
+
+    semi	go to state 168
+
+
+
+state 144
+
+    stmt  ->  return_exp . semi   (rule 54)
+
+    error	shift, and go to state 165
+    SEMI	shift, and go to state 166
+
+    semi	go to state 169
+
+
+
+state 145
+
+    stmt  ->  exp . semi   (rule 45)
+
+    error	shift, and go to state 165
+    SEMI	shift, and go to state 166
+
+    semi	go to state 170
+
+
+
+state 146
+
+    stmt  ->  exp_type_1 . semi   (rule 46)
+    exp_type_1  ->  exp_type_1 . OR exp_type_2   (rule 81)
+
+    error	shift, and go to state 165
+    OR  	shift, and go to state 77
+    SEMI	shift, and go to state 166
+
+    semi	go to state 171
+
+
+
+state 147
+
+    func_decl  ->  type id lbf decl_plist RB @2 lcf . body rcf func_end   (rule 27)
+
+    error	shift, and go to state 125
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INT 	shift, and go to state 101
+    FLOAT	shift, and go to state 9
+    PRINT	shift, and go to state 126
+    RETURN	shift, and go to state 127
+    IF  	shift, and go to state 128
+    FOR 	shift, and go to state 129
+    READ	shift, and go to state 130
+    WHILE	shift, and go to state 131
+    BREAK	shift, and go to state 132
+    CONTINUE	shift, and go to state 133
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LC  	shift, and go to state 116
+    LB  	shift, and go to state 42
+    SWITCH	shift, and go to state 134
+
+
+    var_decl	go to state 135
+    type	go to state 136
+    id  	go to state 137
+    lcf 	go to state 138
+    body	go to state 172
+    stmts	go to state 140
+    stmt	go to state 141
+    break	go to state 142
+    continue	go to state 143
+    return_exp	go to state 144
+    exp 	go to state 145
+    exp_type_1	go to state 146
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 148
+
+    decl_pl  ->  decl_param COMMA decl_pl .   (rule 37)
+
+    $default	reduce using rule 37 (decl_pl)
+
+
+
+state 149
+
+    func_decl  ->  void id lbf decl_plist RB @3 lcf . body rcf func_end   (rule 29)
+
+    error	shift, and go to state 125
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INT 	shift, and go to state 101
+    FLOAT	shift, and go to state 9
+    PRINT	shift, and go to state 126
+    RETURN	shift, and go to state 127
+    IF  	shift, and go to state 128
+    FOR 	shift, and go to state 129
+    READ	shift, and go to state 130
+    WHILE	shift, and go to state 131
+    BREAK	shift, and go to state 132
+    CONTINUE	shift, and go to state 133
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LC  	shift, and go to state 116
+    LB  	shift, and go to state 42
+    SWITCH	shift, and go to state 134
+
+
+    var_decl	go to state 135
+    type	go to state 136
+    id  	go to state 137
+    lcf 	go to state 138
+    body	go to state 173
+    stmts	go to state 140
+    stmt	go to state 141
+    break	go to state 142
+    continue	go to state 143
+    return_exp	go to state 144
+    exp 	go to state 145
+    exp_type_1	go to state 146
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 150
+
+    arith_exp_type_1  ->  arith_exp_type_1 . plus_minus_op arith_exp_type_2   (rule 87)
+    args_list  ->  args_list COMMA arith_exp_type_1 .   (rule 101)
+
+    ADD 	shift, and go to state 86
+    SUB 	shift, and go to state 87
+
+    $default	reduce using rule 101 (args_list)
+
+    plus_minus_op	go to state 88
+
+
+
+state 151
+
+    stmt  ->  error SEMI .   (rule 58)
+
+    $default	reduce using rule 58 (stmt)
+
+
+
+state 152
+
+    stmt  ->  error RC .   (rule 59)
+
+    $default	reduce using rule 59 (stmt)
+
+
+
+state 153
+
+    stmt  ->  PRINT LB . args1 RB semi   (rule 56)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+    STRING	shift, and go to state 174
+
+    $default	reduce using rule 65 (args1)
+
+    id  	go to state 43
+    args1	go to state 175
+    args_list1	go to state 176
+    string	go to state 177
+    arith_exp_type_1	go to state 178
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 154
+
+    return_exp  ->  RETURN exp_type_1 .   (rule 78)
+    exp_type_1  ->  exp_type_1 . OR exp_type_2   (rule 81)
+
+    OR  	shift, and go to state 77
+
+    $default	reduce using rule 78 (return_exp)
+
+
+
+state 155
+
+    stmt  ->  IF LB . exp_type_1 RB lcf body rcf ELSE lcf body rcf   (rule 49)
+    stmt  ->  IF LB . exp_type_1 RB lcf body rcf   (rule 50)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    id  	go to state 43
+    exp_type_1	go to state 179
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 156
+
+    stmt  ->  FOR LB . exp semi for_exp semi for_exp RB lcf body rcf   (rule 47)
+
+    ID  	shift, and go to state 10
+
+    id  	go to state 16
+    exp 	go to state 180
+
+
+
+state 157
+
+    stmt  ->  READ LB . args RB semi   (rule 57)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    $default	reduce using rule 100 (args)
+
+    id  	go to state 43
+    arith_exp_type_1	go to state 107
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    args	go to state 181
+    args_list	go to state 109
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 158
+
+    stmt  ->  WHILE LB . exp_type_1 RB lcf body rcf   (rule 48)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    id  	go to state 43
+    exp_type_1	go to state 182
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 159
+
+    stmt  ->  SWITCH LB . exp_type_1 RB LC case_exp default_exp RC   (rule 51)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    id  	go to state 43
+    exp_type_1	go to state 183
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 160
+
+    br_list1  ->  br_list1 . LBP exp_type_1 RBP   (rule 25)
+    exp  ->  id br_list1 . EQUAL exp_type_1   (rule 80)
+    term  ->  id br_list1 .   (rule 97)
+
+    LBP 	shift, and go to state 57
+    EQUAL	shift, and go to state 58
+
+    $default	reduce using rule 97 (term)
+
+
+
+state 161
+
+    stmt  ->  lcf body . rcf   (rule 55)
+
+    RC  	shift, and go to state 162
+
+    rcf 	go to state 184
+
+
+
+state 162
+
+    rcf  ->  RC .   (rule 32)
+
+    $default	reduce using rule 32 (rcf)
+
+
+
+state 163
+
+    grammar_start  ->  libraries decls INT MAIN @1 LB RB lcf body rcf .   (rule 2)
+
+    $default	reduce using rule 2 (grammar_start)
+
+
+
+state 164
+
+    stmts  ->  stmt stmts .   (rule 42)
+
+    $default	reduce using rule 42 (stmts)
+
+
+
+state 165
+
+    semi  ->  error . SEMI   (rule 63)
+
+    SEMI	shift, and go to state 185
+
+
+
+state 166
+
+    semi  ->  SEMI .   (rule 62)
+
+    $default	reduce using rule 62 (semi)
+
+
+
+state 167
+
+    stmt  ->  break semi .   (rule 53)
+
+    $default	reduce using rule 53 (stmt)
+
+
+
+state 168
+
+    stmt  ->  continue semi .   (rule 52)
+
+    $default	reduce using rule 52 (stmt)
+
+
+
+state 169
+
+    stmt  ->  return_exp semi .   (rule 54)
+
+    $default	reduce using rule 54 (stmt)
+
+
+
+state 170
+
+    stmt  ->  exp semi .   (rule 45)
+
+    $default	reduce using rule 45 (stmt)
+
+
+
+state 171
+
+    stmt  ->  exp_type_1 semi .   (rule 46)
+
+    $default	reduce using rule 46 (stmt)
+
+
+
+state 172
+
+    func_decl  ->  type id lbf decl_plist RB @2 lcf body . rcf func_end   (rule 27)
+
+    RC  	shift, and go to state 162
+
+    rcf 	go to state 186
+
+
+
+state 173
+
+    func_decl  ->  void id lbf decl_plist RB @3 lcf body . rcf func_end   (rule 29)
+
+    RC  	shift, and go to state 162
+
+    rcf 	go to state 187
+
+
+
+state 174
+
+    string  ->  STRING .   (rule 70)
+
+    $default	reduce using rule 70 (string)
+
+
+
+state 175
+
+    stmt  ->  PRINT LB args1 . RB semi   (rule 56)
+
+    RB  	shift, and go to state 188
+
+
+
+state 176
+
+    args1  ->  args_list1 .   (rule 64)
+    args_list1  ->  args_list1 . COMMA arith_exp_type_1   (rule 66)
+    args_list1  ->  args_list1 . COMMA string   (rule 68)
+
+    COMMA	shift, and go to state 189
+
+    $default	reduce using rule 64 (args1)
+
+
+
+state 177
+
+    args_list1  ->  string .   (rule 69)
+
+    $default	reduce using rule 69 (args_list1)
+
+
+
+state 178
+
+    args_list1  ->  arith_exp_type_1 .   (rule 67)
+    arith_exp_type_1  ->  arith_exp_type_1 . plus_minus_op arith_exp_type_2   (rule 87)
+
+    ADD 	shift, and go to state 86
+    SUB 	shift, and go to state 87
+
+    $default	reduce using rule 67 (args_list1)
+
+    plus_minus_op	go to state 88
+
+
+
+state 179
+
+    stmt  ->  IF LB exp_type_1 . RB lcf body rcf ELSE lcf body rcf   (rule 49)
+    stmt  ->  IF LB exp_type_1 . RB lcf body rcf   (rule 50)
+    exp_type_1  ->  exp_type_1 . OR exp_type_2   (rule 81)
+
+    OR  	shift, and go to state 77
+    RB  	shift, and go to state 190
+
+
+
+state 180
+
+    stmt  ->  FOR LB exp . semi for_exp semi for_exp RB lcf body rcf   (rule 47)
+
+    error	shift, and go to state 165
+    SEMI	shift, and go to state 166
+
+    semi	go to state 191
+
+
+
+state 181
+
+    stmt  ->  READ LB args . RB semi   (rule 57)
+
+    RB  	shift, and go to state 192
+
+
+
+state 182
+
+    stmt  ->  WHILE LB exp_type_1 . RB lcf body rcf   (rule 48)
+    exp_type_1  ->  exp_type_1 . OR exp_type_2   (rule 81)
+
+    OR  	shift, and go to state 77
+    RB  	shift, and go to state 193
+
+
+
+state 183
+
+    stmt  ->  SWITCH LB exp_type_1 . RB LC case_exp default_exp RC   (rule 51)
+    exp_type_1  ->  exp_type_1 . OR exp_type_2   (rule 81)
+
+    OR  	shift, and go to state 77
+    RB  	shift, and go to state 194
+
+
+
+state 184
+
+    stmt  ->  lcf body rcf .   (rule 55)
+
+    $default	reduce using rule 55 (stmt)
+
+
+
+state 185
+
+    semi  ->  error SEMI .   (rule 63)
+
+    $default	reduce using rule 63 (semi)
+
+
+
+state 186
+
+    func_decl  ->  type id lbf decl_plist RB @2 lcf body rcf . func_end   (rule 27)
+
+    $default	reduce using rule 33 (func_end)
+
+    func_end	go to state 195
+
+
+
+state 187
+
+    func_decl  ->  void id lbf decl_plist RB @3 lcf body rcf . func_end   (rule 29)
+
+    $default	reduce using rule 33 (func_end)
+
+    func_end	go to state 196
+
+
+
+state 188
+
+    stmt  ->  PRINT LB args1 RB . semi   (rule 56)
+
+    error	shift, and go to state 165
+    SEMI	shift, and go to state 166
+
+    semi	go to state 197
+
+
+
+state 189
+
+    args_list1  ->  args_list1 COMMA . arith_exp_type_1   (rule 66)
+    args_list1  ->  args_list1 COMMA . string   (rule 68)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+    STRING	shift, and go to state 174
+
+    id  	go to state 43
+    string	go to state 198
+    arith_exp_type_1	go to state 199
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 190
+
+    stmt  ->  IF LB exp_type_1 RB . lcf body rcf ELSE lcf body rcf   (rule 49)
+    stmt  ->  IF LB exp_type_1 RB . lcf body rcf   (rule 50)
+
+    LC  	shift, and go to state 116
+
+    lcf 	go to state 200
+
+
+
+state 191
+
+    stmt  ->  FOR LB exp semi . for_exp semi for_exp RB lcf body rcf   (rule 47)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    $default	reduce using rule 61 (for_exp)
+
+    id  	go to state 43
+    for_exp	go to state 201
+    exp_type_1	go to state 202
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 192
+
+    stmt  ->  READ LB args RB . semi   (rule 57)
+
+    error	shift, and go to state 165
+    SEMI	shift, and go to state 166
+
+    semi	go to state 203
+
+
+
+state 193
+
+    stmt  ->  WHILE LB exp_type_1 RB . lcf body rcf   (rule 48)
+
+    LC  	shift, and go to state 116
+
+    lcf 	go to state 204
+
+
+
+state 194
+
+    stmt  ->  SWITCH LB exp_type_1 RB . LC case_exp default_exp RC   (rule 51)
+
+    LC  	shift, and go to state 205
+
+
+
+state 195
+
+    func_decl  ->  type id lbf decl_plist RB @2 lcf body rcf func_end .   (rule 27)
+
+    $default	reduce using rule 27 (func_decl)
+
+
+
+state 196
+
+    func_decl  ->  void id lbf decl_plist RB @3 lcf body rcf func_end .   (rule 29)
+
+    $default	reduce using rule 29 (func_decl)
+
+
+
+state 197
+
+    stmt  ->  PRINT LB args1 RB semi .   (rule 56)
+
+    $default	reduce using rule 56 (stmt)
+
+
+
+state 198
+
+    args_list1  ->  args_list1 COMMA string .   (rule 68)
+
+    $default	reduce using rule 68 (args_list1)
+
+
+
+state 199
+
+    args_list1  ->  args_list1 COMMA arith_exp_type_1 .   (rule 66)
+    arith_exp_type_1  ->  arith_exp_type_1 . plus_minus_op arith_exp_type_2   (rule 87)
+
+    ADD 	shift, and go to state 86
+    SUB 	shift, and go to state 87
+
+    $default	reduce using rule 66 (args_list1)
+
+    plus_minus_op	go to state 88
+
+
+
+state 200
+
+    stmt  ->  IF LB exp_type_1 RB lcf . body rcf ELSE lcf body rcf   (rule 49)
+    stmt  ->  IF LB exp_type_1 RB lcf . body rcf   (rule 50)
+
+    error	shift, and go to state 125
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INT 	shift, and go to state 101
+    FLOAT	shift, and go to state 9
+    PRINT	shift, and go to state 126
+    RETURN	shift, and go to state 127
+    IF  	shift, and go to state 128
+    FOR 	shift, and go to state 129
+    READ	shift, and go to state 130
+    WHILE	shift, and go to state 131
+    BREAK	shift, and go to state 132
+    CONTINUE	shift, and go to state 133
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LC  	shift, and go to state 116
+    LB  	shift, and go to state 42
+    SWITCH	shift, and go to state 134
+
+
+    var_decl	go to state 135
+    type	go to state 136
+    id  	go to state 137
+    lcf 	go to state 138
+    body	go to state 206
+    stmts	go to state 140
+    stmt	go to state 141
+    break	go to state 142
+    continue	go to state 143
+    return_exp	go to state 144
+    exp 	go to state 145
+    exp_type_1	go to state 146
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 201
+
+    stmt  ->  FOR LB exp semi for_exp . semi for_exp RB lcf body rcf   (rule 47)
+
+    error	shift, and go to state 165
+    SEMI	shift, and go to state 166
+
+    semi	go to state 207
+
+
+
+state 202
+
+    for_exp  ->  exp_type_1 .   (rule 60)
+    exp_type_1  ->  exp_type_1 . OR exp_type_2   (rule 81)
+
+    OR  	shift, and go to state 77
+
+    $default	reduce using rule 60 (for_exp)
+
+
+
+state 203
+
+    stmt  ->  READ LB args RB semi .   (rule 57)
+
+    $default	reduce using rule 57 (stmt)
+
+
+
+state 204
+
+    stmt  ->  WHILE LB exp_type_1 RB lcf . body rcf   (rule 48)
+
+    error	shift, and go to state 125
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INT 	shift, and go to state 101
+    FLOAT	shift, and go to state 9
+    PRINT	shift, and go to state 126
+    RETURN	shift, and go to state 127
+    IF  	shift, and go to state 128
+    FOR 	shift, and go to state 129
+    READ	shift, and go to state 130
+    WHILE	shift, and go to state 131
+    BREAK	shift, and go to state 132
+    CONTINUE	shift, and go to state 133
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LC  	shift, and go to state 116
+    LB  	shift, and go to state 42
+    SWITCH	shift, and go to state 134
+
+
+    var_decl	go to state 135
+    type	go to state 136
+    id  	go to state 137
+    lcf 	go to state 138
+    body	go to state 208
+    stmts	go to state 140
+    stmt	go to state 141
+    break	go to state 142
+    continue	go to state 143
+    return_exp	go to state 144
+    exp 	go to state 145
+    exp_type_1	go to state 146
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 205
+
+    stmt  ->  SWITCH LB exp_type_1 RB LC . case_exp default_exp RC   (rule 51)
+
+    CASE	shift, and go to state 209
+
+    $default	reduce using rule 74 (case_exp)
+
+    case_exp	go to state 210
+
+
+
+state 206
+
+    stmt  ->  IF LB exp_type_1 RB lcf body . rcf ELSE lcf body rcf   (rule 49)
+    stmt  ->  IF LB exp_type_1 RB lcf body . rcf   (rule 50)
+
+    RC  	shift, and go to state 162
+
+    rcf 	go to state 211
+
+
+
+state 207
+
+    stmt  ->  FOR LB exp semi for_exp semi . for_exp RB lcf body rcf   (rule 47)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    $default	reduce using rule 61 (for_exp)
+
+    id  	go to state 43
+    for_exp	go to state 212
+    exp_type_1	go to state 202
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 208
+
+    stmt  ->  WHILE LB exp_type_1 RB lcf body . rcf   (rule 48)
+
+    RC  	shift, and go to state 162
+
+    rcf 	go to state 213
+
+
+
+state 209
+
+    case_exp  ->  CASE . LB arith_exp_type_1 RB COLON lcf stmts rcf case_exp   (rule 73)
+
+    LB  	shift, and go to state 214
+
+
+
+state 210
+
+    stmt  ->  SWITCH LB exp_type_1 RB LC case_exp . default_exp RC   (rule 51)
+
+    DEFAULT	shift, and go to state 215
+
+    $default	reduce using rule 76 (default_exp)
+
+    default_exp	go to state 216
+
+
+
+state 211
+
+    stmt  ->  IF LB exp_type_1 RB lcf body rcf . ELSE lcf body rcf   (rule 49)
+    stmt  ->  IF LB exp_type_1 RB lcf body rcf .   (rule 50)
+
+    ELSE	shift, and go to state 217
+
+    $default	reduce using rule 50 (stmt)
+
+
+
+state 212
+
+    stmt  ->  FOR LB exp semi for_exp semi for_exp . RB lcf body rcf   (rule 47)
+
+    RB  	shift, and go to state 218
+
+
+
+state 213
+
+    stmt  ->  WHILE LB exp_type_1 RB lcf body rcf .   (rule 48)
+
+    $default	reduce using rule 48 (stmt)
+
+
+
+state 214
+
+    case_exp  ->  CASE LB . arith_exp_type_1 RB COLON lcf stmts rcf case_exp   (rule 73)
+
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LB  	shift, and go to state 42
+
+    id  	go to state 43
+    arith_exp_type_1	go to state 219
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 215
+
+    default_exp  ->  DEFAULT . COLON lcf stmts rcf   (rule 75)
+
+    COLON	shift, and go to state 220
+
+
+
+state 216
+
+    stmt  ->  SWITCH LB exp_type_1 RB LC case_exp default_exp . RC   (rule 51)
+
+    RC  	shift, and go to state 221
+
+
+
+state 217
+
+    stmt  ->  IF LB exp_type_1 RB lcf body rcf ELSE . lcf body rcf   (rule 49)
+
+    LC  	shift, and go to state 116
+
+    lcf 	go to state 222
+
+
+
+state 218
+
+    stmt  ->  FOR LB exp semi for_exp semi for_exp RB . lcf body rcf   (rule 47)
+
+    LC  	shift, and go to state 116
+
+    lcf 	go to state 223
+
+
+
+state 219
+
+    case_exp  ->  CASE LB arith_exp_type_1 . RB COLON lcf stmts rcf case_exp   (rule 73)
+    arith_exp_type_1  ->  arith_exp_type_1 . plus_minus_op arith_exp_type_2   (rule 87)
+
+    ADD 	shift, and go to state 86
+    SUB 	shift, and go to state 87
+    RB  	shift, and go to state 224
+
+    plus_minus_op	go to state 88
+
+
+
+state 220
+
+    default_exp  ->  DEFAULT COLON . lcf stmts rcf   (rule 75)
+
+    LC  	shift, and go to state 116
+
+    lcf 	go to state 225
+
+
+
+state 221
+
+    stmt  ->  SWITCH LB exp_type_1 RB LC case_exp default_exp RC .   (rule 51)
+
+    $default	reduce using rule 51 (stmt)
+
+
+
+state 222
+
+    stmt  ->  IF LB exp_type_1 RB lcf body rcf ELSE lcf . body rcf   (rule 49)
+
+    error	shift, and go to state 125
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INT 	shift, and go to state 101
+    FLOAT	shift, and go to state 9
+    PRINT	shift, and go to state 126
+    RETURN	shift, and go to state 127
+    IF  	shift, and go to state 128
+    FOR 	shift, and go to state 129
+    READ	shift, and go to state 130
+    WHILE	shift, and go to state 131
+    BREAK	shift, and go to state 132
+    CONTINUE	shift, and go to state 133
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LC  	shift, and go to state 116
+    LB  	shift, and go to state 42
+    SWITCH	shift, and go to state 134
+
+
+    var_decl	go to state 135
+    type	go to state 136
+    id  	go to state 137
+    lcf 	go to state 138
+    body	go to state 226
+    stmts	go to state 140
+    stmt	go to state 141
+    break	go to state 142
+    continue	go to state 143
+    return_exp	go to state 144
+    exp 	go to state 145
+    exp_type_1	go to state 146
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 223
+
+    stmt  ->  FOR LB exp semi for_exp semi for_exp RB lcf . body rcf   (rule 47)
+
+    error	shift, and go to state 125
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INT 	shift, and go to state 101
+    FLOAT	shift, and go to state 9
+    PRINT	shift, and go to state 126
+    RETURN	shift, and go to state 127
+    IF  	shift, and go to state 128
+    FOR 	shift, and go to state 129
+    READ	shift, and go to state 130
+    WHILE	shift, and go to state 131
+    BREAK	shift, and go to state 132
+    CONTINUE	shift, and go to state 133
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LC  	shift, and go to state 116
+    LB  	shift, and go to state 42
+    SWITCH	shift, and go to state 134
+
+
+    var_decl	go to state 135
+    type	go to state 136
+    id  	go to state 137
+    lcf 	go to state 138
+    body	go to state 227
+    stmts	go to state 140
+    stmt	go to state 141
+    break	go to state 142
+    continue	go to state 143
+    return_exp	go to state 144
+    exp 	go to state 145
+    exp_type_1	go to state 146
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 224
+
+    case_exp  ->  CASE LB arith_exp_type_1 RB . COLON lcf stmts rcf case_exp   (rule 73)
+
+    COLON	shift, and go to state 228
+
+
+
+state 225
+
+    default_exp  ->  DEFAULT COLON lcf . stmts rcf   (rule 75)
+
+    error	shift, and go to state 125
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INT 	shift, and go to state 101
+    FLOAT	shift, and go to state 9
+    PRINT	shift, and go to state 126
+    RETURN	shift, and go to state 127
+    IF  	shift, and go to state 128
+    FOR 	shift, and go to state 129
+    READ	shift, and go to state 130
+    WHILE	shift, and go to state 131
+    BREAK	shift, and go to state 132
+    CONTINUE	shift, and go to state 133
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LC  	shift, and go to state 116
+    LB  	shift, and go to state 42
+    SWITCH	shift, and go to state 134
+
+    var_decl	go to state 135
+    type	go to state 136
+    id  	go to state 137
+    lcf 	go to state 138
+    stmts	go to state 229
+    stmt	go to state 141
+    break	go to state 142
+    continue	go to state 143
+    return_exp	go to state 144
+    exp 	go to state 145
+    exp_type_1	go to state 146
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 226
+
+    stmt  ->  IF LB exp_type_1 RB lcf body rcf ELSE lcf body . rcf   (rule 49)
+
+    RC  	shift, and go to state 162
+
+    rcf 	go to state 230
+
+
+
+state 227
+
+    stmt  ->  FOR LB exp semi for_exp semi for_exp RB lcf body . rcf   (rule 47)
+
+    RC  	shift, and go to state 162
+
+    rcf 	go to state 231
+
+
+
+state 228
+
+    case_exp  ->  CASE LB arith_exp_type_1 RB COLON . lcf stmts rcf case_exp   (rule 73)
+
+    LC  	shift, and go to state 116
+
+    lcf 	go to state 232
+
+
+
+state 229
+
+    default_exp  ->  DEFAULT COLON lcf stmts . rcf   (rule 75)
+
+    RC  	shift, and go to state 162
+
+    rcf 	go to state 233
+
+
+
+state 230
+
+    stmt  ->  IF LB exp_type_1 RB lcf body rcf ELSE lcf body rcf .   (rule 49)
+
+    $default	reduce using rule 49 (stmt)
+
+
+
+state 231
+
+    stmt  ->  FOR LB exp semi for_exp semi for_exp RB lcf body rcf .   (rule 47)
+
+    $default	reduce using rule 47 (stmt)
+
+
+
+state 232
+
+    case_exp  ->  CASE LB arith_exp_type_1 RB COLON lcf . stmts rcf case_exp   (rule 73)
+
+    error	shift, and go to state 125
+    ADD 	shift, and go to state 38
+    SUB 	shift, and go to state 39
+    INT 	shift, and go to state 101
+    FLOAT	shift, and go to state 9
+    PRINT	shift, and go to state 126
+    RETURN	shift, and go to state 127
+    IF  	shift, and go to state 128
+    FOR 	shift, and go to state 129
+    READ	shift, and go to state 130
+    WHILE	shift, and go to state 131
+    BREAK	shift, and go to state 132
+    CONTINUE	shift, and go to state 133
+    INTEGERS	shift, and go to state 40
+    FLOATING_POINTS	shift, and go to state 41
+    ID  	shift, and go to state 10
+    LC  	shift, and go to state 116
+    LB  	shift, and go to state 42
+    SWITCH	shift, and go to state 134
+
+    var_decl	go to state 135
+    type	go to state 136
+    id  	go to state 137
+    lcf 	go to state 138
+    stmts	go to state 234
+    stmt	go to state 141
+    break	go to state 142
+    continue	go to state 143
+    return_exp	go to state 144
+    exp 	go to state 145
+    exp_type_1	go to state 146
+    exp_type_2	go to state 45
+    exp_type_3	go to state 46
+    arith_exp_type_1	go to state 47
+    arith_exp_type_2	go to state 48
+    unary_exp	go to state 49
+    term	go to state 50
+    func_call	go to state 51
+    consts	go to state 52
+    intg	go to state 53
+    floats	go to state 54
+    unary_operator	go to state 55
+
+
+
+state 233
+
+    default_exp  ->  DEFAULT COLON lcf stmts rcf .   (rule 75)
+
+    $default	reduce using rule 75 (default_exp)
+
+
+
+state 234
+
+    case_exp  ->  CASE LB arith_exp_type_1 RB COLON lcf stmts . rcf case_exp   (rule 73)
+
+    RC  	shift, and go to state 162
+
+    rcf 	go to state 235
+
+
+
+state 235
+
+    case_exp  ->  CASE LB arith_exp_type_1 RB COLON lcf stmts rcf . case_exp   (rule 73)
+
+    CASE	shift, and go to state 209
+
+    $default	reduce using rule 74 (case_exp)
+
+    case_exp	go to state 236
+
+
+
+state 236
+
+    case_exp  ->  CASE LB arith_exp_type_1 RB COLON lcf stmts rcf case_exp .   (rule 73)
+
+    $default	reduce using rule 73 (case_exp)
+
+
+
+state 237
+
+    $   	go to state 238
+
+
+
+state 238
+
+    $   	go to state 239
+
+
+
+state 239
+
+    $default	accept

@@ -2,12 +2,14 @@
 
 #include<stdio.h>
 #include<iostream>
-#include "parser.tab.h"
+#include "parser2.tab.h"
 using namespace std;
 
 %}
 %%
 "NULL"													{return(NULLL);}
+"read"													{return(READD);}
+"print"													{return(PRINTT);}
 "decl"													{return(DECL);}
 "func"													{return(FUNC);}
 "begin"													{return(BEGINN);}
@@ -19,6 +21,7 @@ using namespace std;
 "args"													{return(ARGS);}
 "if" 													{return(IF);}
 "goto" 													{return(GOTO);}
+\"(\\.|[^\"])*\"										{return(STRINGG);}
 [a-zA-z]+[a-zA-z0-9._]*[(][a-zA-z0-9._]+[)]				{return(ID);}
 [a-zA-z]+[a-zA-z0-9._]* 								{return(ID);}
 "==" 													{return(ARITH_REL_OPS);}

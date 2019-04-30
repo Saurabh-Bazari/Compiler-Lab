@@ -1,3 +1,3 @@
-bison -d -v parser.y
-flex lexer.lex
-g++ -g -std=c++11 lex.yy.c parser.tab.c parser.tab.h -o main -lfl
+bison -d -v parser1.y
+flex lexer1.lex
+g++ -g -std=c++11 lex.yy.c parser1.tab.c parser1.tab.h -o main -lfl

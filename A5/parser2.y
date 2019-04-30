@@ -23,6 +23,7 @@ extern char *yytext;
 int labelID=0;
 int globArgsIntReg=0;
 int globArgsFloReg=6;
+int stringCounter=0;
 
 
 int stringType(string);
@@ -44,7 +45,7 @@ char * getArrayName(char *);
 %start funcs
 %token INT FLOAT ID EQ DECL
 %token ARITH_REL_OPS
-%token IF GOTO LABEL 
+%token IF GOTO LABEL PRINTT STRINGG READD
 %token FUNC BEGINN RETURN END PARAM REFPARAM CALL ARGS NULLL
 %%
 
@@ -70,13 +71,117 @@ intm_line: 			binary_operation {globArgsFloReg = 6; globArgsIntReg = 0;}
 					| jump_unCond {globArgsFloReg = 6; globArgsIntReg = 0;}
 					| label{globArgsFloReg = 6; globArgsIntReg = 0;}
 
-					| arr_decl_stmt
+					| arr_decl_stmt {globArgsFloReg = 6; globArgsIntReg = 0;}
 					| args_stmt
 					| param_stmt 
 					| refparam_stmt {globArgsFloReg = 6; globArgsIntReg = 0;}
 					| call_stmt {globArgsFloReg = 6; globArgsIntReg = 0;}
 					| return_stmt {globArgsFloReg = 6; globArgsIntReg = 0;}
-			
+					| print_stmt {globArgsFloReg = 6; globArgsIntReg = 0;}
+					| scan_stmt {globArgsFloReg = 6; globArgsIntReg = 0;}
+
+scan_stmt:			READD var_ID
+					{
+						string opr($2);
+						if(stringType(opr)==3){
+							string xx(getArrayParam($2));
+							char * zz = getArrayParam($2);
+							char * yy = getArrayName($2);
+							if(stringType(xx)==0)
+								fprintf(user_code,"lw $t3, %s\n", zz);
+							else
+								fprintf(user_code,"li $t3, %s\n", zz);
+							fprintf(user_code, "la $t4, %s\n", yy);
+
+							if(yy[0]=='f'){
+								fprintf(user_code, "li $t5, 8\n"); fprintf(user_code, "mul $t3, $t3, $t5\n");
+								fprintf(user_code, "add $t4, $t4, $t3\n");
+								
+								fprintf(user_code, "li $v0, 6\n");
+								fprintf(user_code, "syscall\n");
+								fprintf(user_code, "s.s $f0, 0($t4)\n");
+							}
+							else{
+								fprintf(user_code, "li $t5, 4\n"); fprintf(user_code, "mul $t3, $t3, $t5\n");
+								fprintf(user_code, "add $t4, $t4, $t3\n");
+
+								fprintf(user_code, "li $v0, 5\n");
+								fprintf(user_code, "syscall\n");
+								fprintf(user_code, "sw $v0, 0($t4)\n");
+							}
+						}
+						else if(stringType(opr)==0){
+							checkNewDeclare($2);
+							if(opr[0]=='f'){
+								fprintf(user_code, "li $v0, 6\n");
+								fprintf(user_code, "syscall\n");
+								fprintf(user_code, "s.s $f0, %s\n", $2);
+							}
+							else{
+								fprintf(user_code, "li $v0, 5\n");
+								fprintf(user_code, "syscall\n");
+								fprintf(user_code, "sw $v0, %s\n", $2);
+							}
+						}
+					}
+
+print_stmt:			PRINTT id_or_num
+					{
+						string opr($2);
+						if(stringType(opr)==3){
+							string xx(getArrayParam($2));
+							char * zz = getArrayParam($2);
+							char * yy = getArrayName($2);
+							if(stringType(xx)==0)
+								fprintf(user_code,"lw $t3, %s\n", zz);
+							else
+								fprintf(user_code,"li $t3, %s\n", zz);
+							fprintf(user_code, "la $t4, %s\n", yy);
+
+							if(yy[0]=='f'){
+								fprintf(user_code, "li $t5, 8\n"); fprintf(user_code, "mul $t3, $t3, $t5\n");
+								fprintf(user_code, "add $t4, $t4, $t3\n");
+								fprintf(user_code, "l.s $f12, 0($t4)\n");
+								fprintf(user_code, "li $v0, 2\n");
+							}
+							else{
+								fprintf(user_code, "li $t5, 4\n"); fprintf(user_code, "mul $t3, $t3, $t5\n");
+								fprintf(user_code, "add $t4, $t4, $t3\n");
+								fprintf(user_code, "lw $a0, 0($t4)\n");
+								fprintf(user_code, "li $v0, 1\n");
+							}
+						}
+						else if(stringType(opr)==0){
+							checkNewDeclare($2);
+							if(opr[0]=='f'){
+								fprintf(user_code,"l.s $f12, %s\n", $2);
+								fprintf(user_code, "li $v0, 2\n");
+							}
+							else{
+								fprintf(user_code,"lw $a0, %s\n", $2);
+								fprintf(user_code, "li $v0, 1\n");
+							}
+						}
+						else{
+							if(stringType(opr)==2){
+								fprintf(user_code,"li.s $f12, %s\n", $2);
+								fprintf(user_code, "li $v0, 2\n");
+							}
+							else{
+								fprintf(user_code,"li $a0, %s\n", $2);
+								fprintf(user_code, "li $v0, 1\n");
+							}
+						}
+						fprintf(user_code, "syscall\n");
+					}
+					| PRINTT stringgg
+					{
+						fprintf(final_code,"string%d:\t\t.asciiz %s\n", stringCounter, $2);
+						fprintf(user_code, "la $a0, string%d\n", stringCounter);
+						stringCounter++;
+						fprintf(user_code, "li $v0, 4\n");
+						fprintf(user_code, "syscall\n");
+					}
  
 binary_operation: 	var_ID EQ id_or_num arith_rel_ops id_or_num 
 					{
@@ -99,35 +204,21 @@ binary_operation: 	var_ID EQ id_or_num arith_rel_ops id_or_num
 						else if(strcmp($4,">=")==0)
 							great_eq_op($1, $3, $5);
 						else if(strcmp($4,"!=")==0)
-							great_eq_op($1, $3, $5);
+							not_eq_op($1, $3, $5);
 						
 					}
 			
-id_or_num : 		var_ID 
-					{
-						$$ = $1;
-						cout << "num " << $1 << endl;
-					}
-					| num 
-					{
-						$$ = $1; 
-						cout << "num " << $1 << endl;
-					}
+id_or_num : 		var_ID { $$ = $1;}
+					| num {$$ = $1;}
 
-arith_rel_ops: ARITH_REL_OPS 
-					{ 
-						$$ = strdup(yytext); 
-					}	
+arith_rel_ops: ARITH_REL_OPS {$$ = strdup(yytext);}	
 
-var_ID: 			ID 
-					{ 
-						$$ = strdup(yytext); 
-						cout << $$ << endl;  
-					}
+var_ID: 			ID {$$ = strdup(yytext);}
 
 num: 				INT {$$ = strdup(yytext);}
 					| FLOAT {$$ = strdup(yytext);}
 
+stringgg:			STRINGG { $$ = strdup(yytext);}
 
 assignment: 		var_ID EQ var_ID 
 					{
@@ -335,9 +426,6 @@ arr_decl_stmt:		DECL var_ID
 							const char *cstr = ss.c_str();
 							fprintf(final_code, "%s:\t\t.word %s\n", getArrayName($2), cstr);
 						}
-						 
-						
-
 					}
 
 param_stmt	: 		PARAM id_or_num
@@ -1409,6 +1497,7 @@ int main (void) {
 	final_code=fopen("mips.s","w");
 
 	fprintf(final_code,".data\n");
+	fprintf(final_code,"newLine:\t\t.asciiz \"\\n\"\n");
 
 	yyparse ();
 

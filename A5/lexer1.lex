@@ -1,13 +1,12 @@
 %{
 	#include <bits/stdc++.h>
-	#include "parser.tab.h"
+	#include "parser1.tab.h"
 	using namespace std;
 %}
 
 %option yylineno
 %option noyywrap
 %s HASH
-
 
 lineComment     "//".*
 blockComment    "/*"((("*"[^/])?)|[^*])*"*/"
@@ -17,7 +16,6 @@ ADD		"+"
 SUB		"-"
 MUL		"*"
 DIV		"/"
-MOD		"%"
 GT		">"
 LT		"<"
 GE		">="
@@ -43,8 +41,8 @@ FOR		"for"
 WHILE	"while"
 ELSE	"else"
 BREAK   "break"
-PRINT 	"print"
-READ	"read"
+PRINT 	"printf"
+READ	"scanf"
 CONTINUE 	"continue"
 SWITCH		"switch"
 CASE 		"case"
@@ -56,7 +54,7 @@ LIBRARY 						(\#include[ \n\t]*\<.+\>)|((\#include[ \t\n]*\".+\"))
 ID								([A-Za-z_]([A-Za-z0-9_])*)
 WHITE_SPACES 					([ \t]+)
 NEW_LINE 						([\n])
-STRING							\".*?[^\\]\"
+STRING							\"(\\.|[^\"])*\"
 
 %%
 {lineComment}   {}
@@ -67,7 +65,6 @@ STRING							\".*?[^\\]\"
 {SUB} 			{return SUB;}
 {MUL} 			{return MUL;}
 {DIV} 			{return DIV;}
-{MOD} 			{return MOD;}
 {GT} 			{return GT;}
 {LT} 			{return LT;}
 {GE} 			{return GE;}

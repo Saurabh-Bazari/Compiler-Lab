@@ -1,5 +1,4 @@
 %{
-
 	#include <bits/stdc++.h>
 	#include<string.h>
 	#define pb push_back
@@ -12,9 +11,11 @@
 	void yyerror(string s);
  	extern char* yytext;
  	extern int yyleng;
+	int syntaxERROR = 0;
 
 	void yyerror(char *s){
-		printf ("Invalid Syntax\n%s %d\n", s,yylineno);
+		syntaxERROR = 1;
+		printf ("Syntax Error in line no. %d\n",yylineno);
 	}
 
 	struct ptr{
@@ -53,7 +54,6 @@
 	vector<string> callFunc;
 	int gScope = 0;
 	int semanticERROR = 0;
-	int syntaxError = 0;
 	ptr * treeRoot;
 	string gtype = "";
 	string gid = "";
@@ -71,7 +71,8 @@
 	int printFlag = 0;
 	vector<vector<int>> gdimv2d;
 	vector<string> brk ,cont;
-	FILE * f = fopen("o.txt", "w");
+	FILE * f = fopen("intermediate.txt", "w");
+	FILE * q = fopen("quadruple.txt", "w");
 	vector<ptr*> funcList;
 
 	vector<vector<string>> brlist;
@@ -83,27 +84,22 @@
 	char * stringVal;
 }
 
-%token ADD SUB MUL DIV GT LT GE LBP RBP LE EQ NE MAIN INT FLOAT PRINT RETURN OR AND IF FOR READ WHILE ELSE BREAK CONTINUE INTEGERS FLOATING_POINTS ID SEMI LC RC LB RB COMMA EQUAL  MOD LIBRARY VOID SWITCH CASE DEFAULT COLON STRING
-%type<Ptr> grammar_start libraries decls decl break continue var_decl type var_list var id br_list br_list1 func_decl lbf lcf rcf func_end decl_plist decl_pl decl_param body stmts stmt exp case_exp default_exp return_exp exp_type_1 exp_type_2 exp_type_3 arith_exp_type_1 arith_exp_type_2 unary_exp term func_call args args_list args1 args_list1 consts intg floats plus_minus_op mul_div_op relation_op unary_operator string
-
+%token ADD SUB MUL DIV GT LT GE LBP RBP LE EQ NE MAIN INT FLOAT PRINT RETURN OR AND IF FOR READ WHILE ELSE BREAK CONTINUE INTEGERS FLOATING_POINTS ID SEMI LC RC LB RB COMMA EQUAL  LIBRARY VOID SWITCH CASE DEFAULT COLON STRING
+%type<Ptr> grammar_start libraries decls decl break continue var_decl type var_list var id br_list br_list1 for_exp func_decl lbf lcf rcf func_end decl_plist decl_pl decl_param body stmts stmt exp case_exp default_exp return_exp exp_type_1 exp_type_2 exp_type_3 arith_exp_type_1 arith_exp_type_2 unary_exp term func_call args args_list args1 args_list1 consts intg floats plus_minus_op mul_div_op relation_op unary_operator string
 %start	grammar_start
 
 %%
-
-grammar_start : 	libraries decls INT MAIN LB RB lcf stmts rcf 
+grammar_start : 	libraries decls INT MAIN {returnType = "int";} LB RB lcf body rcf 
 															{   
 																treeRoot = new ptr; 
 																treeRoot->children.pb($1);
 																treeRoot->children.pb($2);
-																treeRoot->children.pb($7);
 																treeRoot->children.pb($8);
 																treeRoot->children.pb($9);
+																treeRoot->children.pb($10);
 																treeRoot->tag = "START";
 															}
-                    |   error							    
-															{ 
-																yyerrok;
-															}
+                    |   error RC						    { yyerrok; syntaxERROR = 1;treeRoot = new ptr;}
 
 libraries : 		LIBRARY libraries 						
 															{
@@ -162,6 +158,8 @@ decl :  			func_decl
 																(t->children).pb($1);
 																$$ = t;
 															}
+
+					| error SEMI 							{yyerrok;syntaxERROR=1;}
 					
 var_decl : 			type var_list SEMI 	
 															{ 
@@ -364,7 +362,24 @@ br_list1 : 			LBP exp_type_1 RBP
 															}
 
 
-func_decl : 		type id lbf decl_plist RB lcf body rcf func_end
+func_decl : 		type id lbf decl_plist RB 
+													{
+														if(FuncTable.find($2->svalue)==FuncTable.end()  )
+														{
+															func * f  = new func;
+															f->numparam = gparams.size();
+															f->returntype = $1->dtype;
+															f->params = gparams;
+															f->name = $2->svalue;
+															FuncTable[$2->svalue] = f;
+														}
+														else{
+															cout << "Semantic Error : Multiple functions have the same name" << $2->svalue << "in lineno. "<< yylineno<< endl;
+															semanticERROR = 1;
+														}		
+														gparams.clear();
+													}
+					lcf body rcf func_end
 															{
 																ptr * t = new ptr;
 																t->tag = "FUNCDECL";
@@ -372,31 +387,34 @@ func_decl : 		type id lbf decl_plist RB lcf body rcf func_end
 																(t->children).pb($2);
 																(t->children).pb($3);
 																(t->children).pb($4);
-																(t->children).pb($6);
 																(t->children).pb($7);
 																(t->children).pb($8);
 																(t->children).pb($9);
+																(t->children).pb($10);
 																t->gScope = gScope;
 																t->svalue = $2->svalue;
 																$$ = t;
-																if(FuncTable.find($2->svalue)==FuncTable.end()  )
-																{
-																	func * f  = new func;
-																	f->numparam = gparams.size();
-																	f->returntype = $1->dtype;
-																	f->params = gparams;
-																	f->name = $2->svalue;
-																	FuncTable[$2->svalue] = f;
-																}
-																else{
-																	cout << "Semantic Error : Multiple functions have the same name" << $2->svalue << "in lineno. "<< yylineno<< endl;
-																	semanticERROR = 1;
-																}		
-																gparams.clear();
 																funcList.pb(t);
 															}
 
-					| void id lbf decl_plist RB lcf body rcf func_end
+					| void id lbf decl_plist RB
+													{
+														if(FuncTable.find($2->svalue)==FuncTable.end()  )
+														{
+															func * f  = new func;
+															f->numparam = gparams.size();
+															f->returntype = "void";
+															f->params = gparams;
+															f->name = $2->svalue;
+															FuncTable[$2->svalue] = f;
+														}
+														else{
+															cout << "Semantic Error : Multiple functions have the same name" << $2->svalue << "in lineno. "<< yylineno<< endl;
+															semanticERROR = 1;
+														}	
+														gparams.clear();
+													} 
+						lcf body rcf func_end
 															{ 
 																ptr * t = new ptr;
 																t->tag = "FUNCDECL";
@@ -404,26 +422,12 @@ func_decl : 		type id lbf decl_plist RB lcf body rcf func_end
 																(t->children).pb($2);
 																(t->children).pb($3);
 																(t->children).pb($4);
-																(t->children).pb($6);
 																(t->children).pb($7);
 																(t->children).pb($8);
 																(t->children).pb($9);
+																(t->children).pb($10);
 																t->svalue = $2->svalue;
 																$$ = t;
-																if(FuncTable.find($2->svalue)==FuncTable.end()  )
-																{
-																	func * f  = new func;
-																	f->numparam = gparams.size();
-																	f->returntype = "void";
-																	f->params = gparams;
-																	f->name = $2->svalue;
-																	FuncTable[$2->svalue] = f;
-																}
-																else{
-																	cout << "Semantic Error : Multiple functions have the same name" << $2->svalue << "in lineno. "<< yylineno<< endl;
-																	semanticERROR = 1;
-																}	
-																gparams.clear();
 																funcList.pb(t);
 															}
 
@@ -437,7 +441,8 @@ lbf : 				LB										{
 																SymTable.push_back(mp);
 															}
 
-lcf :				LC           
+
+lcf :				LC          
 															{
 																ptr * t = new ptr;
 																t->tag = "LCF";
@@ -458,6 +463,8 @@ rcf :				RC
 																gScope--;
 																SymTable.pop_back();
 															}
+
+														
 
 func_end :													{
 																ptr * t = new ptr;
@@ -557,7 +564,7 @@ stmt:				var_decl
 																(t->children).pb($1);
 																$$ = t;
 															}
-					| exp SEMI 								
+					| exp semi 								
 															{
 																ptr * t = new ptr;																
 																t->tag = "STMTEXP";
@@ -565,7 +572,7 @@ stmt:				var_decl
 																(t->children).pb($1);
 																$$ = t;
 															}
-					| exp_type_1 SEMI 								
+					| exp_type_1 semi 								
 															{
 																ptr * t = new ptr;																
 																t->tag = "STMTEXP";
@@ -574,7 +581,7 @@ stmt:				var_decl
 																$$ = t;
 															}		
 
-					| FOR LB exp SEMI exp_type_1 SEMI exp_type_1 RB lcf stmts rcf 
+					| FOR LB exp semi for_exp semi for_exp RB lcf body rcf 
 															{
 																ptr * t = new ptr;																
 																t->tag = "FOREXP";
@@ -587,7 +594,7 @@ stmt:				var_decl
 																(t->children).pb($11);
 																$$ = t;
 															}
-					| WHILE LB exp_type_1 RB lcf stmts rcf 			
+					| WHILE LB exp_type_1 RB lcf body rcf 			
 															{
 																ptr * t = new ptr;
 																t->tag = "WHILEEXP";
@@ -598,7 +605,7 @@ stmt:				var_decl
 																(t->children).pb($7);
 																$$ = t;
 															}
-					| IF LB exp_type_1 RB lcf stmts rcf ELSE lcf stmts rcf 
+					| IF LB exp_type_1 RB lcf body rcf ELSE lcf body rcf 
 															{
 																ptr * t = new ptr;
 																t->tag = "IFELSEEXP";
@@ -612,7 +619,7 @@ stmt:				var_decl
 																(t->children).pb($11);
 																$$ = t;
 															}
-					| IF LB exp_type_1 RB lcf stmts rcf 				
+					| IF LB exp_type_1 RB lcf body rcf 				
 															{
 																ptr * t = new ptr;
 																t->tag = "IFEXP";
@@ -633,7 +640,7 @@ stmt:				var_decl
 																(t->children).pb($7);
 																$$ = t;	
 															}
-					| continue SEMI 						
+					| continue semi					
 															{
 																ptr * t = new ptr;
 																t->tag = "CONTINUEEXP";
@@ -642,7 +649,7 @@ stmt:				var_decl
 																$$ = t;
 																
 															}															
-					| break SEMI 							
+					| break semi 							
 															{
 																ptr * t = new ptr;
 																t->tag = "STMTBREAK";
@@ -650,7 +657,7 @@ stmt:				var_decl
 																(t->children).pb($1);
 																$$ = t;
 															}
-					| return_exp SEMI                       
+					| return_exp semi                       
 															{
 																ptr * t = new ptr;
 																t->tag = "STMTRETURN";
@@ -671,22 +678,44 @@ stmt:				var_decl
 																(t->children).pb($3);
 																$$ = t;	
 															}
-					| PRINT LB args1 RB	SEMI     			{
+					| PRINT LB args1 RB	semi     			{
 																ptr * t = new ptr;
 																t->tag = "PRINTEXP";
 																t->gScope = gScope;
 																(t->children).pb($3);
 																$$ = t;	
 															}
-					| READ LB args RB SEMI	     			{
+					| READ LB args RB semi	     			{
 																ptr * t = new ptr;
 																t->tag = "READEXP";
 																t->gScope = gScope;
 																(t->children).pb($3);
 																$$ = t;	
 															}
-					| error SEMI							{ yyerrok; }
-					
+					| error	SEMI							{yyerrok; syntaxERROR = 1;}
+					| error RC								{yyerrok; syntaxERROR = 1;}
+
+for_exp:			exp_type_1 								
+															{
+																ptr * t = new ptr;
+																t->tag = "FOREXPERR";
+																t->gScope = gScope;
+																(t->children).pb($1);
+																$$ = t;	
+															}	
+					|
+															
+															{
+																ptr * t = new ptr;
+																t->tag = "FOREXPERR";
+																t->gScope = gScope;
+																$$ = t;		
+															}		
+
+semi: 				SEMI										{}
+					|	error SEMI									{yyerrok; syntaxERROR = 1;}
+
+
 args1 	:  	args_list1 								
 															{
 																ptr * t = new ptr;
@@ -911,7 +940,7 @@ exp_type_1 	:		exp_type_1 OR exp_type_2
 																t->value = $1->value;
 																$$ = t;
 															}
-					;
+								
 
 exp_type_2 	:	exp_type_2 AND exp_type_3 					{
 																ptr * t = new ptr;
@@ -1224,7 +1253,6 @@ consts 	:	 intg
 																t->value = $1->value;
 																$$ = t;
 															}
-			;
 			
 intg  :   INTEGERS		
 												{    
@@ -1298,14 +1326,6 @@ mul_div_op 	: 	MUL
 													t->gScope = gScope;
 													t->tag = "MULDIVOP";
 													t->svalue = "/";
-													$$ = t;
-												}
-			| 	MOD 				
-												{
-													ptr * t = new ptr;
-													t->gScope = gScope;
-													t->tag = "MULDIVOP";
-													t->svalue = "%";
 													$$ = t;
 												}
 			;
@@ -1386,11 +1406,11 @@ void printSpace(int cnt)
 
 void PrintTree(ptr *n,int cnt)
 {
-
 	printSpace(cnt);
 	if(n==NULL){
 		return;
 	}
+	cout << n->tag << endl;
 	for (int i = 0; i < (n->children).size(); ++i)
 	{
 		PrintTree((n->children)[i],cnt+1);
@@ -1473,6 +1493,8 @@ string generateCode(ptr * root){
 		if(root->children.size()==3){
 			string val1 = generateCode(v[2]);
 			fprintf(f, "%s.%s.%d%s = %s.%s\n", v[0]->dtype.c_str(), v[1]->svalue.c_str(), v[1]->gScope, currFunc.c_str(),  v[2]->dtype.c_str(), val1.c_str());
+			fprintf(q, " , %s.%s , , %s.%s.%d%s\n", v[2]->dtype.c_str(), val1.c_str(), v[0]->dtype.c_str(), v[1]->svalue.c_str(), v[1]->gScope, currFunc.c_str());
+
 		}
 		else{
 			string val1 = generateCode(v[1]);
@@ -1488,10 +1510,13 @@ string generateCode(ptr * root){
 		if(v.size()==2)
 		{
 			string val1 = generateCode(v[1]);
-			if(v[0]->gScope>=1)	
+			if(v[0]->gScope>=1){
 				fprintf(f, "%s.%s.%d%s = %s.%s\n", v[0]->dtype.c_str(), v[0]->svalue.c_str(), v[0]->gScope, currFunc.c_str(), v[1]->dtype.c_str(), val1.c_str());
+				fprintf(q, " , %s.%s , , %s.%s.%d%s\n", v[1]->dtype.c_str(), val1.c_str(), v[0]->dtype.c_str(), v[0]->svalue.c_str(), v[0]->gScope, currFunc.c_str());
+			}
 			else{
 				fprintf(f, "%s.%s.%d = %s.%s\n", v[0]->dtype.c_str(), v[0]->svalue.c_str(), v[0]->gScope, v[1]->dtype.c_str(), val1.c_str());
+				fprintf(q, " , %s.%s , , %s.%s.%d\n", v[1]->dtype.c_str(), val1.c_str(), v[0]->dtype.c_str(), v[0]->svalue.c_str(), v[0]->gScope);
 			}
 		}
 		else{
@@ -1505,14 +1530,21 @@ string generateCode(ptr * root){
 			brlist.pop_back();
 			string var1 = getTemp();
 			fprintf(f, "int.%s = int.%s\n", var1.c_str(), list[0].c_str());
+			fprintf(q, " , int.%s , , int.%s\n", list[0].c_str(), var1.c_str());
 			for(int i=0;i<list.size()-1;i++){
 				fprintf(f, "int.%s = int.%s * %d\n", var1.c_str(), var1.c_str(), dimptrorg[i+1]);
+				fprintf(q, " * , int.%s , %d , int.%s\n", var1.c_str(), dimptrorg[i+1], var1.c_str());
+
 				fprintf(f, "int.%s = int.%s + int.%s\n", var1.c_str(), var1.c_str(), list[i+1].c_str());
+				fprintf(q, " + , int.%s , int.%s , int.%s\n", var1.c_str(), list[i+1].c_str(), var1.c_str());
+
 			}
-			if(v[0]->gScope>=1)	
+			if(v[0]->gScope>=1)	{
 				fprintf(f, "%s.%s.%d%s(int.%s) = %s.%s\n", root->dtype.c_str(), t.c_str(), v[0]->gScope, currFunc.c_str(), var1.c_str(), v[2]->dtype.c_str(), val1.c_str());
-			else{
+				fprintf(q, " , %s.%s , , %s.%s.%d%s(int.%s)\n", v[2]->dtype.c_str(), val1.c_str(), root->dtype.c_str(), t.c_str(), v[0]->gScope, currFunc.c_str(), var1.c_str());
+			}else{
 				fprintf(f, "%s.%s.%d(int.%s) = %s.%s\n", root->dtype.c_str(), t.c_str(), v[0]->gScope, var1.c_str(), v[2]->dtype.c_str(), val1.c_str());
+				fprintf(q, " , %s.%s , , %s.%s.%d(int.%s)\n", v[2]->dtype.c_str(), val1.c_str(), root->dtype.c_str(), t.c_str(), v[0]->gScope, var1.c_str());
 			}
 		}
 	}else if(root->tag=="BRLIST1"){
@@ -1535,20 +1567,46 @@ string generateCode(ptr * root){
 			string l4 = getLabel();
 			string t = getTemp();
 			fprintf(f, "int.%s = %s.%s <= 0\n", t.c_str(), v[0]->dtype.c_str(), var1.c_str());
+			fprintf(q, " <= , %s.%s , 0 , int.%s\n", v[0]->dtype.c_str(), var1.c_str(), t.c_str());
+
 			fprintf(f, "if int.%s goto %s\n", t.c_str(), l1.c_str());
+			fprintf(q, " if , int.%s , %s , goto\n", t.c_str(), l1.c_str());
+
 			fprintf(f, "goto %s\n", l2.c_str());
+			fprintf(q, " , %s , , goto\n", l2.c_str());
+
 			fprintf(f, "%s:\n", l1.c_str());
+			fprintf(q, "%s:\n", l1.c_str());
+
 			string var2 = generateCode(v[1]);
 			string t1 = getTemp();
 			fprintf(f, "int.%s = %s.%s <= 0\n", t1.c_str(), v[1]->dtype.c_str(), var2.c_str());
+			fprintf(q, " <= , %s.%s , 0 , int.%s\n", v[1]->dtype.c_str(), var2.c_str(), t1.c_str());
+
 			fprintf(f, "if int.%s goto %s\n", t1.c_str(), l3.c_str());
+			fprintf(q, "if , int.%s , %s , goto\n", t1.c_str(), l3.c_str());
+
 			fprintf(f, "goto %s\n", l2.c_str());
+			fprintf(q, " , %s , , goto\n", l2.c_str());
+
 			fprintf(f, "%s:\n", l3.c_str());
+			fprintf(q, "%s:\n", l3.c_str());
+
 			fprintf(f, "int.%s = 0\n", t.c_str());
+			fprintf(q, " , 0 , , int.%s\n", t.c_str());
+
 			fprintf(f, "goto %s\n", l4.c_str());
+			fprintf(q, " , %s , , goto\n", l4.c_str());
+
 			fprintf(f, "%s:\n", l2.c_str());
+			fprintf(q, "%s:\n", l2.c_str());
+
 			fprintf(f, "int.%s = 1\n", t.c_str());
+			fprintf(q, " , 1 , , int.%s\n", t.c_str());
+
 			fprintf(f, "%s:\n", l4.c_str());
+			fprintf(q, "%s:\n", l4.c_str());
+
 			return t;
 		}
 
@@ -1563,20 +1621,46 @@ string generateCode(ptr * root){
 			string l4 = getLabel();
 			string t = getTemp();
 			fprintf(f, "int.%s = %s.%s > 0\n", t.c_str(), v[0]->dtype.c_str(), var1.c_str());
+			fprintf(q, " > , %s.%s , 0 , int.%s\n", v[0]->dtype.c_str(), var1.c_str(), t.c_str());
+
 			fprintf(f, "if int.%s goto %s\n", t.c_str(), l1.c_str());
+			fprintf(q, " if , int.%s , %s , goto\n", t.c_str(), l1.c_str());
+
 			fprintf(f, "goto %s\n", l2.c_str());
+			fprintf(q, " , %s , , goto\n", l2.c_str());
+
 			fprintf(f, "%s:\n", l1.c_str());
+			fprintf(q, "%s:\n", l1.c_str());
+
 			string var2 = generateCode(v[1]);
 			string t1 = getTemp();
 			fprintf(f, "int.%s = %s.%s > 0\n", t1.c_str(), v[1]->dtype.c_str(), var2.c_str());
+			fprintf(q, " > , %s.%s , 0 , int.%s\n", v[1]->dtype.c_str(), var2.c_str(), t1.c_str());
+
 			fprintf(f, "if int.%s goto %s\n", t1.c_str(), l3.c_str());
+			fprintf(q, " if , int.%s , %s , goto\n", t1.c_str(), l3.c_str());
+
 			fprintf(f, "goto %s\n", l2.c_str());
+			fprintf(q, " , %s , , goto\n", l2.c_str());
+
 			fprintf(f, "%s:\n", l3.c_str());
+			fprintf(q, "%s:\n", l3.c_str());
+
 			fprintf(f, "int.%s = 1\n", t.c_str());
+			fprintf(q, " , 1 , , int.%s\n", t.c_str());
+
 			fprintf(f, "goto %s\n", l4.c_str());
+			fprintf(q, " , %s , , goto\n", l4.c_str());
+
 			fprintf(f, "%s:\n", l2.c_str());
+			fprintf(q, "%s:\n", l2.c_str());
+
 			fprintf(f, "int.%s = 0\n", t.c_str());
+			fprintf(q, " , 0 , , int.%s\n", t.c_str());
+
 			fprintf(f, "%s:\n", l4.c_str());
+			fprintf(q, "%s:\n", l4.c_str());
+
 			return t;
 		}									
 	}else if(root->tag=="EXPTYPE3" || root->tag=="ARITHEXPTYPE1" || root->tag=="ARITHEXPTYPE2"){
@@ -1587,6 +1671,8 @@ string generateCode(ptr * root){
 		string val1 = generateCode(v[0]);
 		string val2 = generateCode(v[2]);
 		fprintf(f, "%s.%s = %s.%s %s %s.%s\n", root->dtype.c_str(), var1.c_str(), v[0]->dtype.c_str(), val1.c_str(), v[1]->svalue.c_str(), v[2]->dtype.c_str(), val2.c_str());
+		fprintf(q, " %s , %s.%s , %s.%s , %s.%s\n", v[1]->svalue.c_str(), v[0]->dtype.c_str(), val1.c_str(), v[2]->dtype.c_str(), val2.c_str(), root->dtype.c_str(), var1.c_str());
+		
 		return var1;																	
 	}else if(root->tag=="UNARYEXP"){
 		if(v.size()==1){
@@ -1595,9 +1681,13 @@ string generateCode(ptr * root){
 		string var1 = generateCode(v[1]);				
 		if(v[0]->svalue=="++"){
 			fprintf(f, "%s.%s = %s.%s + 1\n", v[1]->dtype.c_str(), var1.c_str(), v[1]->dtype.c_str(), var1.c_str() );															
+			fprintf(q, " + , %s.%s , 1 , %s.%s\n", v[1]->dtype.c_str(), var1.c_str(), v[1]->dtype.c_str(), var1.c_str());															
+
 		}
 		if(v[0]->svalue=="--"){
 			fprintf(f, "%s.%s = %s.%s - 1\n", v[1]->dtype.c_str(), var1.c_str(), v[1]->dtype.c_str(), var1.c_str() );
+			fprintf(q, " - , %s.%s , 1 , %s.%s\n", v[1]->dtype.c_str(), var1.c_str(),  v[1]->dtype.c_str(), var1.c_str() );
+
 		}
 		return var1;		
 		
@@ -1615,9 +1705,15 @@ string generateCode(ptr * root){
 			brlist.pop_back();
 			string var1 = getTemp();
 			fprintf(f, "int.%s = int.%s\n", var1.c_str(), list[0].c_str());
+			fprintf(q, " , int.%s , , int.%s\n", list[0].c_str(),  var1.c_str());
+
 			for(int i=0;i<list.size()-1;i++){
 				fprintf(f, "int.%s = int.%s * %d\n", var1.c_str(), var1.c_str(), dimptrorg[i+1]);
+				fprintf(q, " * , int.%s , %d , int.%s\n", var1.c_str(), dimptrorg[i+1], var1.c_str());
+
 				fprintf(f, "int.%s = int.%s + int.%s\n", var1.c_str(), var1.c_str(), list[i+1].c_str());
+				fprintf(q, " + , int.%s , int.%s , int.%s\n", var1.c_str(), list[i+1].c_str(), var1.c_str());
+
 			}
 			string temp;
 			if(v[0]->gScope>=1){
@@ -1636,8 +1732,12 @@ string generateCode(ptr * root){
 		if(root->dtype=="int"){
 			int a = root->value;
 			fprintf(f, "int.%s = %d\n", var1.c_str(), a);
+			fprintf(q, " , %d , , int.%s\n", a, var1.c_str());
+
 		}else{
 			fprintf(f, "float.%s = %f\n", var1.c_str(), root->value);
+			fprintf(q, " , %f , , float.%s\n", root->value, var1.c_str());
+
 		}
 		return var1;
 	}else if(root->tag=="STMTBREAK" || root->tag=="STMTRETURN" || root->tag=="CONTINUEEXP" || root->tag=="STMTVARDECL" || root->tag=="STMTEXP"){
@@ -1651,40 +1751,70 @@ string generateCode(ptr * root){
 		string l3 = getLabel();
 		string l4 = getLabel();
 		fprintf(f, "%s:\n", l1.c_str());
+		fprintf(q, "%s:\n", l1.c_str());
+
 		string cond = generateCode(v[1]);
 		fprintf(f, "if int.%s goto %s\n", cond.c_str(), l2.c_str());
+		fprintf(q, "if , int.%s , %s , goto\n", cond.c_str(), l2.c_str());
+
 		fprintf(f, "goto %s\n", l3.c_str());
+		fprintf(q, " , %s , , goto\n", l3.c_str());
+
 		fprintf(f, "%s:\n", l2.c_str());
+		fprintf(q, "%s:\n", l2.c_str());
+
 		brk.pb(l3);
 		cont.pb(l4);
 		string body = generateCode(v[4]);
 		brk.pop_back();
 		cont.pop_back();
 		fprintf(f, "%s:\n", l4.c_str());
+		fprintf(q, "%s:\n", l4.c_str());
+
 		string itr = generateCode(v[2]);
 		fprintf(f, "goto %s\n", l1.c_str());
+		fprintf(q, " , %s , , goto\n", l1.c_str());
+
 		fprintf(f, "%s:\n", l3.c_str());
+		fprintf(q, "%s:\n", l3.c_str());
+
 		return "";
 	}else if(root->tag=="BREAK"){
 		fprintf(f, "goto %s\n", brk[brk.size()-1].c_str());
+		fprintf(q, " , %s , , goto\n", brk[brk.size()-1].c_str());
+
 	}else if(root->tag=="CONTINUE"){
 		fprintf(f, "goto %s\n", cont[cont.size()-1].c_str());
+		fprintf(q, " , %s , , goto\n", cont[cont.size()-1].c_str());
+
 	}else if(root->tag=="WHILEEXP"){
 		string l1 = getLabel();		
 		string l2 = getLabel();
 		string l3 = getLabel();
 		fprintf(f, "%s:\n", l1.c_str());
+		fprintf(q, "%s:\n", l1.c_str());
+
 		string cond = generateCode(v[0]);
 		fprintf(f, "if int.%s goto %s\n", cond.c_str(), l2.c_str());
+		fprintf(q, " if , int.%s , %s , goto\n", cond.c_str(), l2.c_str());
+
 		fprintf(f, "goto %s\n", l3.c_str());
-		fprintf(f, "%s:\n", l2.c_str());		
+		fprintf(q, " , %s , , goto\n", l3.c_str());
+
+		fprintf(f, "%s:\n", l2.c_str());
+		fprintf(q, "%s:\n", l2.c_str());		
+
 		brk.pb(l3);
 		cont.pb(l1);
 		string body = generateCode(v[2]);
 		brk.pop_back();
 		cont.pop_back();
 		fprintf(f, "goto %s\n", l1.c_str());
+		fprintf(q, " , %s , , goto\n", l1.c_str());
+
 		fprintf(f, "%s:\n", l3.c_str());
+		fprintf(q, "%s:\n", l3.c_str());
+
 		return "";															
 	}else if(root->tag=="ID"){
 		string var1 = "";
@@ -1707,29 +1837,51 @@ string generateCode(ptr * root){
 		string l2 = getLabel();
 		string cond = generateCode(v[0]);
 		fprintf(f, "if int.%s goto %s\n", cond.c_str(), l1.c_str());
+		fprintf(q, " if , int.%s , %s , goto\n", cond.c_str(), l1.c_str());
+
 		fprintf(f, "goto %s\n", l2.c_str());
+		fprintf(q, " , %s , , goto\n", l2.c_str());
+
 		fprintf(f, "%s:\n", l1.c_str());
+		fprintf(q, "%s:\n", l1.c_str());
+
 		string body = generateCode(v[2]);
 		fprintf(f, "%s:\n", l2.c_str());
+		fprintf(q, "%s:\n", l2.c_str());
+
 	}else if(root->tag=="IFELSEEXP"){
 		string l1 = getLabel();
 		string l2 = getLabel();
 		string l3 = getLabel();
 		string cond = generateCode(v[0]);
 		fprintf(f, "if int.%s goto %s\n", cond.c_str(), l1.c_str());
+		fprintf(q, " if , int.%s , %s , goto\n", cond.c_str(), l1.c_str());
+
 		fprintf(f, "goto %s\n", l2.c_str());
+		fprintf(q, " , %s , , goto\n", l2.c_str());
+
 		fprintf(f, "%s:\n", l1.c_str());
+		fprintf(q, "%s:\n", l1.c_str());
+
 		string body = generateCode(v[2]);
 		fprintf(f, "goto %s\n", l3.c_str());
+		fprintf(q, " , %s , , goto\n", l3.c_str());
+
 		fprintf(f, "%s:\n", l2.c_str());
+		fprintf(q, "%s:\n", l2.c_str());
+
 		string el = generateCode(v[5]);
 		fprintf(f, "%s:\n", l3.c_str());
+		fprintf(q, "%s:\n", l3.c_str());
+
 	}else if(root->tag=="SWITCHEXP"){
 		chk = generateCode(v[0]);
 		brk.pb(getLabel());
 		generateCode(v[1]);
 		generateCode(v[2]);
 		fprintf(f, "%s:", brk[brk.size()-1].c_str());
+		fprintf(q, "%s:", brk[brk.size()-1].c_str());
+
 		brk.pop_back();				
 	}else if(root->tag=="CASEEXP"){
 		if(v.size()==0){
@@ -1740,11 +1892,21 @@ string generateCode(ptr * root){
 		string l1 = getLabel();
 		string l2 = getLabel();
 		fprintf(f, "int.%s = int.%s == int.%s\n", t1.c_str(), chk.c_str(), var1.c_str());
+		fprintf(q, " == , int.%s , int.%s , int.%s\n", chk.c_str(), var1.c_str(), t1.c_str());
+
 		fprintf(f, "if int.%s goto %s\n", t1.c_str(), l1.c_str());
+		fprintf(q, " if , int.%s , %s , goto\n", t1.c_str(), l1.c_str());
+
 		fprintf(f, "goto %s\n", l2.c_str());
+		fprintf(q, " , %s , , goto\n", l2.c_str());
+
 		fprintf(f, "%s:\n", l1.c_str());
+		fprintf(q, "%s:\n", l1.c_str());
+
 		string body = generateCode(v[2]);
 		fprintf(f, "%s:\n", l2.c_str());
+		fprintf(q, "%s:\n", l2.c_str());
+
 		generateCode(v[4]);
 		return "";
 	}else if(root->tag=="DEFAULTEXP"){
@@ -1758,9 +1920,13 @@ string generateCode(ptr * root){
 	}else if(root->tag=="RETURN"){
 		if(v.size()==0){
 			fprintf(f, "return NULL\n");
+			fprintf(q, " , NULL , , return\n");
+
 		}else{
 			string var1 = generateCode(v[0]);
 			fprintf(f, "return %s.%s\n", v[0]->dtype.c_str() ,var1.c_str());
+			fprintf(q, " , %s.%s , , return\n", v[0]->dtype.c_str() ,var1.c_str());
+
 		}
 	}else if(root->tag=="FUNCCALL"){
 		int temp = printFlag;
@@ -1770,16 +1936,22 @@ string generateCode(ptr * root){
 		generateCode(v[1]);
 		callFunc.pop_back();
 		fprintf(f, "call %s\n", fName.c_str());
+		fprintf(q, " , %s , , call\n", fName.c_str());
+
 		string var1 = "";
 		if(FuncTable[fName]->returntype!="void"){
 			var1 = getTemp();
 			fprintf(f, "refparam %s.%s\n", FuncTable[fName]->returntype.c_str(), var1.c_str());
+			fprintf(q, " , %s.%s , , refparam\n", FuncTable[fName]->returntype.c_str(), var1.c_str());
+
 		}
 		printFlag = temp;
 		return var1;
 	}else if(root->tag=="PRINTEXP"){
 		generateCode(v[0]);
 		fprintf(f, "print \"\\n\" \n");
+		fprintf(q, " , \"\\n\" , , print\n");
+
 	}else if(root->tag=="ARGS1"){
 		if(v.size()!=0){
 			vector<string> param;
@@ -1787,6 +1959,8 @@ string generateCode(ptr * root){
 			generateCode(v[0]);
 			for(string s : para[para.size()-1]){
 				fprintf(f, "print %s\n", s.c_str());
+				fprintf(q, " , %s , , print\n", s.c_str());
+
 			}
 			para.pop_back();
 			return "";
@@ -1827,10 +2001,15 @@ string generateCode(ptr * root){
 			para.pb(param);
 			generateCode(v[0]);
 			for(string s : para[para.size()-1]){
-				if(!printFlag)
+				if(!printFlag){
 					fprintf(f, "param %s\n", s.c_str());
-				else
+					fprintf(q, " , %s , , param\n", s.c_str());
+				}
+				else{
 					fprintf(f, "read %s\n", s.c_str());
+					fprintf(q, " , %s , , read\n", s.c_str());
+				}
+
 			}
 			para.pop_back();
 			return "";
@@ -1858,10 +2037,18 @@ string generateCode(ptr * root){
 		{
 			a = a*temp[i];
 		}
-		if(v[0]->gScope>=1)	
+		if(v[0]->gScope>=1)	{
 			fprintf(f, "decl %s.%s.%d%s(%d)\n", v[0]->dtype.c_str(), t.c_str(), v[0]->gScope, currFunc.c_str(),a );
-		else{
+			fprintf(q, " , %s.%s.%d%s(%d) , , decl\n", v[0]->dtype.c_str(), t.c_str(), v[0]->gScope, currFunc.c_str(),a );
+
+		}else{
 			fprintf(f, "decl %s.%s.%d(%d)\n", v[0]->dtype.c_str(), t.c_str(), v[0]->gScope,a );
+			fprintf(q, " , %s.%s.%d(%d) , , decl\n", v[0]->dtype.c_str(), t.c_str(), v[0]->gScope,a );
+
+		}
+	}else if(root->tag=="FOREXPERR"){
+		if(v.size()!=0){
+			return generateCode(v[0]);
 		}
 	}
 	else{
@@ -1871,15 +2058,16 @@ string generateCode(ptr * root){
 	}
 	return "";
 }
-//string convert(string s){
-//	return "\"+"+s+"+"\"";
-//}
 
 void generateFunc(ptr * root){
 	fprintf(f, "func begin %s\n", root->svalue.c_str());
+	fprintf(q, " begin , func , %s , \n", root->svalue.c_str());
+
 	vector< variable * > v = FuncTable[root->svalue]->params;
 	for(variable * var : v){
-		fprintf(f, "args %s.%s.%d.%s\n", var->dtype.c_str(), var->name.c_str(), var->scope, root->svalue.c_str());		
+		fprintf(f, "args %s.%s.%d.%s\n", var->dtype.c_str(), var->name.c_str(), var->scope, root->svalue.c_str());	
+		fprintf(q, " , %s.%s.%d.%s , , args\n", var->dtype.c_str(), var->name.c_str(), var->scope, root->svalue.c_str());		
+
 	}
 	currFunc = "." + root->svalue;
 	if(root->children.size()==7){
@@ -1890,19 +2078,43 @@ void generateFunc(ptr * root){
 	currFunc = "";
 	
 	fprintf(f, "func end\n");
+	fprintf(q, " end , func , , \n");
+
 }
 
 int main(){
 		
 		map< string , variable* > mp;
+
+		func * main  = new func;
+		main->numparam = 0;
+		main->returntype = "int";
+		
+		main->name = "main";
+		FuncTable["main"] = main;
+
 		SymTable.pb(mp);
+
 		yyparse();
+		// PrintTree(treeRoot,0);
 		//SymTablePrint();
-		//PrintTree(treeRoot,0);
-		for( ptr * p : funcList){
-			generateFunc(p);
+
+		if(semanticERROR || syntaxERROR)
+		{
+			cout << "" << endl;
 		}
-		fprintf(f, "func begin main\n");
-		generateCode(treeRoot);
-		fprintf(f, "func end\n");
+		else
+		{
+			fprintf(q, " operator , arg1 , arg2 , result\n");
+			//SymTablePrint();
+			for( ptr * p : funcList)
+				generateFunc(p);
+			fprintf(f, "func begin main\n");
+			fprintf(q, " begin , func , main , \n");
+
+			generateCode(treeRoot);
+			fprintf(f, "func end\n");
+			fprintf(q, " end , func , , \n");
+
+		}
 }
